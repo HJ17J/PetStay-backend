@@ -8,6 +8,10 @@ const Reservations = function (Sequelize, DataTypes) {
         autoIncrement: true,
         allowNull: false,
       },
+      date: {
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
       content: {
         type: DataTypes.TEXT,
         allowNull: false,
