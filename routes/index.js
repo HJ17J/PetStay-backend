@@ -10,4 +10,7 @@ const Creview = require("../controller/Creview");
 //회원정보 조회
 router.post("/profile/:useridx", Cuser.postProfile);
 
+// 리뷰 등록
+router.post("/review/:resvidx", Creview.addReview);
+
 module.exports = router;
