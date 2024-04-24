@@ -35,9 +35,12 @@ const Creview = require("../controller/Creview");
 
 // /api-server
 
-//회원가입
+//회원가입 - 형석
 router.get("/join", Cuser.getJoin);
 router.post("/join", Cuser.postJoin);
+//로그인 - 형석
+router.get("/login", Cuser.getLogin);
+router.post("/login", Cuser.postLogin);
 
 //회원정보 조회
 router.post("/profile/:useridx", Cuser.postProfile);

@@ -7,7 +7,7 @@ exports.getJoin = (req, res) => {
   // res.render("join");
   res.send("---res.render(join)");
 };
-// --- 회원가입 --- 형석
+// --- 회원가입(userid, name 중복체크 기능 추가 예정) --- 형석
 const salt = 10;
 exports.postJoin = async (req, res) => {
   try {
@@ -33,6 +33,31 @@ exports.postJoin = async (req, res) => {
 };
 // --- 회원가입 끝---
 
+// --- 로그인 --- 형석
+exports.getLogin = (req, res) => {
+  // res.render("login");
+  res.send("---res.render(Login)");
+};
+exports.postLogin = async (req, res) => {
+  const { userid, userpw } = req.body;
+  try {
+    const user = await model.Users.findOne({
+      where: { userid: userid },
+    });
+    if (!user) {
+      return res.status(401).json({ message: "사용자를 찾을 수 없습니다." });
+    }
+    const match = await bcrypt.compare(userpw, user.userpw);
+    if (!match) {
+      return res.status(401).json({ message: "비밀번호가 일치하지 않습니다." });
+    }
+    req.session.user = user;
+    res.send({ msg: `환영합니다. ${user.name}님!`, statusCode: 200 });
+  } catch (error) {
+    console.error(`로그인 중 에러 발생 : ${error.message}`);
+    res.status(500).send("로그인 중 오류가 발생했습니다.");
+  }
+};
 exports.postProfile = async (req, res) => {
   try {
     const { useridx } = req.params;
