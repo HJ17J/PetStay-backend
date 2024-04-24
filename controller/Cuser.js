@@ -79,6 +79,16 @@ exports.postLogin = async (req, res) => {
     res.status(500).send("로그인 중 오류가 발생했습니다.");
   }
 };
+exports.postLogout = (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.log(`세션 파괴 중 에러 발생 : ${err}`);
+      return res.status(500).send("로그아웃 중 오류가 발생했습니다.");
+    }
+    res.send({ message: "성공적으로 로그아웃되었습니다.", statusCode: 200 });
+    // res.redirect("/")
+  });
+};
 
 exports.postProfile = async (req, res) => {
   try {

@@ -3,3 +3,7 @@
 show TABLES
 
 DESC users
+
+SELECT * from users
+
+DELETE FROM `users` WHERE `useridx` IN (4,5,6,7)
