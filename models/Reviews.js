@@ -12,10 +12,6 @@ const Reviews = function (Sequelize, DataTypes) {
         type: DataTypes.TEXT,
         allowNull: false,
       },
-      date: {
-        type: DataTypes.DATE,
-        allowNull: false,
-      },
       img: {
         type: DataTypes.STRING(100),
         allowNull: true,
