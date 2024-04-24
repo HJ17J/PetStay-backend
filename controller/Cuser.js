@@ -14,7 +14,7 @@ exports.postProfile = async (req, res) => {
       const sitterData = await model.Sitters.findOne({
         where: { useridx },
       });
-      res.send(userData, sitterData);
+      res.send({ userData, sitterData });
     }
   } catch (err) {
     console.log("err", err);
