@@ -7,6 +7,11 @@ const Creservation = require("../controller/Creservation");
 const Creview = require("../controller/Creview");
 
 // /api-server
+
+//회원가입
+router.get("/join", Cuser.getJoin);
+router.post("/join", Cuser.postJoin);
+
 //회원정보 조회
 router.post("/profile/:useridx", Cuser.postProfile);
 

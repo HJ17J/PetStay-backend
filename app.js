@@ -1,4 +1,5 @@
 const express = require("express");
+const session = require("express-session");
 const { sequelize } = require("./models");
 const cors = require("cors");
 const app = express();
@@ -20,6 +21,16 @@ socketHandler(server);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
+
+// --- session 미들웨어 설정 ---
+app.use(
+  session({
+    secret: "sesac", // 수정
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+// --- session 미들웨어 설정 ---
 
 //routes
 const indexRouter = require("./routes");
@@ -50,7 +61,7 @@ sequelize
   .sync({ force: false })
   .then(() => {
     server.listen(PORT, () => {
-      console.log("http://localhost:8080");
+      console.log(`http://localhost:${PORT}`);
       console.log("http://13.124.54.214/");
     });
   })
