@@ -10,7 +10,7 @@ const Rooms = function (Sequelize, DataTypes) {
       },
     },
     {
-      timestamps: true,
+      timestamps: false,
       freezeTableName: true,
     }
   );

@@ -29,7 +29,7 @@ const Sitters = function (Sequelize, DataTypes) {
       },
     },
     {
-      timestamps: true,
+      timestamps: false,
       freezeTableName: true,
     }
   );
