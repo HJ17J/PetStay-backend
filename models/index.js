@@ -20,8 +20,8 @@ const Rooms = require("./Rooms")(sequelize, Sequelize);
 const Sitters = require("./Sitters")(sequelize, Sequelize);
 
 // 관계설정
-Users.hasOne(Sitters, { foreignKey: "useridx" });
-Sitters.belongsTo(Users, { foreignKey: "useridx" });
+Users.hasOne(Sitters, { foreignKey: "useridx", onUpdate: "CASCADE", onDelete: "CASCADE" });
+Sitters.belongsTo(Users, { foreignKey: "useridx", onUpdate: "CASCADE", onDelete: "CASCADE" });
 
 Reservations.belongsTo(Users, { foreignKey: "useridx" });
 Users.hasMany(Reservations, { foreignKey: "useridx" });
