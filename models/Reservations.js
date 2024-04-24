@@ -12,10 +12,6 @@ const Reservations = function (Sequelize, DataTypes) {
         type: DataTypes.TEXT,
         allowNull: false,
       },
-      date: {
-        type: DataTypes.DATE,
-        allowNull: false,
-      },
       price: {
         type: DataTypes.INTEGER,
         allowNull: false,

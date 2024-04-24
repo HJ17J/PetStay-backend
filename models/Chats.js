@@ -12,10 +12,6 @@ const Chats = function (Sequelize, DataTypes) {
         type: DataTypes.TEXT,
         allowNull: true,
       },
-      date: {
-        type: DataTypes.DATE,
-        allowNull: false,
-      },
       img: {
         type: DataTypes.TEXT,
         allowNull: true,
