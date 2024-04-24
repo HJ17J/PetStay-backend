@@ -10,12 +10,7 @@ if (process.env.NODE_ENV) {
   config = require(__dirname + "/../config/config.js")["development"];
 }
 
-const sequelize = new Sequelize(
-  config.database,
-  config.username,
-  config.password,
-  config
-);
+const sequelize = new Sequelize(config.database, config.username, config.password, config);
 
 const Users = require("./Users")(sequelize, Sequelize);
 const Chats = require("./Chats")(sequelize, Sequelize);

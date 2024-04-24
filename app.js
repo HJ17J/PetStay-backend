@@ -50,7 +50,8 @@ sequelize
   .sync({ force: false })
   .then(() => {
     server.listen(PORT, () => {
-      console.log("server is open");
+      console.log("http://localhost:8080");
+      console.log("http://13.124.54.214/");
     });
   })
   .catch((err) => {
