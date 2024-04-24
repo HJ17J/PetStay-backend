@@ -1,39 +1,47 @@
-const { where } = require("sequelize");
+const { where, Op } = require("sequelize");
 const model = require("../models");
 const bcrypt = require("bcrypt");
 
-// --- 회원가입 페이지 렌더링 ---
+// 회원가입 페이지 렌더링 -형석
 exports.getJoin = (req, res) => {
   // res.render("join");
   res.send("---res.render(join)");
 };
-// --- 회원가입(userid, name 중복체크 기능 추가 예정) --- 형석
+// 회원가입 -형석
 const salt = 10;
 exports.postJoin = async (req, res) => {
   try {
     console.log("req.body >>> ", req.body);
-
+    const { userid, userpw, name, address, usertype } = req.body;
+    const userExists = await model.Users.findOne({
+      where: {
+        [Op.or]: [{ userid: userid }, { name: name }],
+      },
+    });
+    if (userExists) {
+      return res.status(409).send({
+        message: userExists.userid === userid ? "중복된 아이디입니다." : "중복된 닉네임입니다.",
+      });
+    }
     const defaultImgURL = "/static/joinImg.png"; // 이미지 경로 수정
-    const hashedPassword = await bcrypt.hash(req.body.userpw, salt);
+    const hashedPassword = await bcrypt.hash(userpw, salt);
     const newUser = await model.Users.create({
-      userid: req.body.userid,
+      userid: userid,
       userpw: hashedPassword,
-      name: req.body.name,
-      address: req.body.address,
+      name: name,
+      address: address,
       img: defaultImgURL,
-      usertype: req.body.usertype,
+      usertype: usertype,
     });
     req.session.user = newUser; // 세션에 사용자 정보 저장
     res.send({ msg: "회원가입 완료!", statusCode: 200 });
-    // res.redirect("/");
   } catch (error) {
     console.log("회원가입 중 에러 발생", error);
     res.status(500).send("회원가입 실패(서버 오류)");
   }
 };
-// --- 회원가입 끝---
 
-// --- 로그인 --- 형석
+// 로그인 -형석
 exports.getLogin = (req, res) => {
   // res.render("login");
   res.send("---res.render(Login)");
@@ -58,6 +66,7 @@ exports.postLogin = async (req, res) => {
     res.status(500).send("로그인 중 오류가 발생했습니다.");
   }
 };
+
 exports.postProfile = async (req, res) => {
   try {
     const { useridx } = req.params;
