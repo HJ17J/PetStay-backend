@@ -38,4 +38,7 @@ const Creview = require("../controller/Creview");
 router.post("/profile/:useridx", Cuser.postProfile);
 router.patch("/profile/:useridx", upload.single("profileImage"), Cuser.updateProfile);
 
+// 리뷰 등록
+router.post("/review/:resvidx", Creview.addReview);
+
 module.exports = router;
