@@ -28,10 +28,8 @@ Users.hasMany(Reservations, { foreignKey: "useridx" });
 Reservations.belongsTo(Users, { foreignKey: "sitteridx" });
 Users.hasMany(Reservations, { foreignKey: "sitteridx" });
 
-Reviews.belongsTo(Users, { foreignKey: "useridx" });
-Users.hasMany(Reviews, { foreignKey: "useridx" });
-Reviews.belongsTo(Users, { foreignKey: "sitteridx" });
-Users.hasMany(Reviews, { foreignKey: "sitteridx" });
+Reservations.hasMany(Reviews, { foreignKey: "resvidx" });
+Reviews.belongsTo(Reservations, { foreignKey: "resvidx" });
 
 Rooms.belongsTo(Users, { foreignKey: "useridx" });
 Users.hasMany(Rooms, { foreignKey: "useridx" });
