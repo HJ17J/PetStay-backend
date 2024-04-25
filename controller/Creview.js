@@ -13,7 +13,7 @@ exports.addReview = async (req, res) => {
 
     // 확정된 예약이 아닐 경우
     if (!isConfirmed) {
-      return res.status(400).json({ isSuccess: false, message: "확정된 예약이 아님" });
+      return res.status(400).json({ isSuccess: false, msg: "확정된 예약이 아님" });
     }
 
     // 해당 예약 건에 리뷰가 존재하지 않는 경우에만 리뷰 추가
@@ -31,17 +31,17 @@ exports.addReview = async (req, res) => {
 
     // 이미 리뷰가 존재하는 경우
     if (!created) {
-      return res.status(400).json({ isSuccess: false, message: "이미 등록된 리뷰" });
+      return res.status(400).json({ isSuccess: false, msg: "이미 등록된 리뷰" });
     }
 
     res.status(200).json({
       isSuccess: true,
       data: newReview.dataValues,
-      message: "리뷰 등록 성공",
+      msg: "리뷰 등록 성공",
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ isSuccess: false, message: "리뷰 등록 실패" });
+    res.status(500).json({ isSuccess: false, msg: "리뷰 등록 실패" });
   }
 };
 
@@ -56,9 +56,20 @@ exports.deleteReview = async (req, res) => {
     // 리뷰 삭제
     const result = await model.Reviews.destroy({ where: { reviewidx: reviewidx } });
     if (result) {
-      return res.status(200).json({ isSuccess: true, message: "리뷰 삭제 성공" });
+      return res.status(200).json({ isSuccess: true, msg: "리뷰 삭제 성공" });
     }
   } catch (error) {
-    res.status(500).json({ isSuccess: false, message: "리뷰 삭제 실패" });
+    res.status(500).json({ isSuccess: false, msg: "리뷰 삭제 실패" });
+  }
+};
+
+// 리뷰 조회 (회원 마이페이지)
+exports.getUserReviews = async (req, res) => {
+  try {
+    const result = await model.Reviews.findAll({ where: { useridx: req.params.useridx } });
+    const reviews = result.map((el) => el.dataValues);
+    res.status(200).json({ isSuccess: true, data: reviews });
+  } catch (error) {
+    res.status(500).json({ isSuccess: false, msg: "리뷰 조회 실패" });
   }
 };
