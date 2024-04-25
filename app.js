@@ -24,6 +24,9 @@ app.use(
     secret: "sesac", // 수정
     resave: false,
     saveUninitialized: true,
+    cookie: {
+      maxAge: 3600000,
+    },
   })
 );
 // --- session 미들웨어 설정 ---

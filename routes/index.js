@@ -38,9 +38,10 @@ const Creview = require("../controller/Creview");
 //회원가입 - 형석
 router.get("/join", Cuser.getJoin);
 router.post("/join", Cuser.postJoin);
-//로그인 - 형석
+//로그인, 로그아웃 - 형석
 router.get("/login", Cuser.getLogin);
 router.post("/login", Cuser.postLogin);
+router.post("/logout", Cuser.postLogout);
 
 //회원정보 조회
 router.post("/profile/:useridx", Cuser.postProfile);
