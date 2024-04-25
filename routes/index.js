@@ -35,7 +35,7 @@ const Creview = require("../controller/Creview");
 
 // /api-server
 
-//회원가입 - 형석
+//회원가입
 router.get("/join", Cuser.getJoin);
 router.post("/join", Cuser.postJoin);
 //로그인, 로그아웃 - 형석
@@ -49,5 +49,9 @@ router.patch("/profile/:useridx", upload.single("profileImage"), Cuser.updatePro
 
 // 리뷰 등록
 router.post("/review/:resvidx", Creview.addReview);
+// 리뷰 삭제
+router.delete("/review/:reviewidx", Creview.deleteReview);
+// 리뷰 조회 (회원 마이페이지)
+router.get("/review/:useridx", Creview.getUserReviews);
 
 module.exports = router;
