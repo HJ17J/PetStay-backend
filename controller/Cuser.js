@@ -7,7 +7,7 @@ const salt = 10;
 exports.postJoin = async (req, res) => {
   try {
     console.log("req.body >>> ", req.body);
-    const { userid, userpw, name, address, usertype } = req.body;
+    const { userid, userpw, name, address, usertype, ...sitterInfo } = req.body;
     const userExists = await model.Users.findOne({
       where: {
         [Op.or]: [{ userid: userid }, { name: name }],
@@ -28,9 +28,18 @@ exports.postJoin = async (req, res) => {
       img: defaultImgURL,
       usertype: usertype,
     });
-    // console.log(newUser.dataValues.useridx); idx
-    // type으로 if문 검증해서 sitter data추가
-    // idx는 useridx에 넣는거임
+    if (usertype === "sitter") {
+      await model.Sitters.create({
+        useridx: newUser.useridx, // 새롭게 생성된 유저의 ID
+        type: sitterInfo.type,
+        license: sitterInfo.license,
+        career: sitterInfo.career,
+        oneLineIntro: sitterInfo.oneLineIntro,
+        selfIntroduction: sitterInfo.selfIntroduction,
+        pay: sitterInfo.pay,
+        confirm: sitterInfo.confirm,
+      });
+    }
     req.session.user = newUser; // 세션에 사용자 정보 저장
     res.send({ msg: "회원가입 완료!", statusCode: 200 });
   } catch (error) {
