@@ -14,6 +14,10 @@ const Sitters = function (Sequelize, DataTypes) {
         type: DataTypes.TEXT,
         allowNull: true,
       },
+      oneLineIntro: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+      },
       selfIntroduction: {
         type: DataTypes.TEXT,
         allowNull: false,
