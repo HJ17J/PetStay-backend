@@ -1,9 +1,10 @@
 const model = require("../models");
 
+// 리뷰 등록
 exports.addReview = async (req, res) => {
   try {
     const { useridx, sitteridx, content, rate } = req.body;
-    let img = req.body.img ? req.body.img : null;
+    const img = req.file.location ? req.file.location : null;
 
     // 예약 확정 여부 확인 (추후 회원 session 추가하여 비교)
     const { confirm: isConfirmed } = await model.Reservations.findOne({
@@ -45,6 +46,7 @@ exports.addReview = async (req, res) => {
   }
 };
 
+// 리뷰 삭제
 exports.deleteReview = async (req, res) => {
   try {
     const reviewidx = req.params.reviewidx;
