@@ -48,7 +48,7 @@ router.post("/profile/:useridx", Cuser.postProfile);
 router.patch("/profile/:useridx", upload.single("profileImage"), Cuser.updateProfile);
 
 // 리뷰 등록
-router.post("/review/:resvidx", Creview.addReview);
+router.post("/review/:resvidx", upload.single("reviewImage"), Creview.addReview);
 // 리뷰 삭제
 router.delete("/review/:reviewidx", Creview.deleteReview);
 // 리뷰 조회 (회원 마이페이지)
