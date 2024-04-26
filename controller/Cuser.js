@@ -2,11 +2,6 @@ const { where, Op } = require("sequelize");
 const model = require("../models");
 const bcrypt = require("bcrypt");
 
-// 회원가입 페이지 렌더링 -형석
-exports.getJoin = (req, res) => {
-  // res.render("join");
-  res.send("---res.render(join)");
-};
 // 회원가입 -형석
 const salt = 10;
 exports.postJoin = async (req, res) => {
@@ -44,11 +39,6 @@ exports.postJoin = async (req, res) => {
   }
 };
 
-// 로그인 -형석
-exports.getLogin = (req, res) => {
-  // res.render("login");
-  res.send("---res.render(Login)");
-};
 exports.postLogin = async (req, res) => {
   const { userid, userpw } = req.body;
   try {
