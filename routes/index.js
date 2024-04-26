@@ -34,8 +34,24 @@ const Creservation = require("../controller/Creservation");
 const Creview = require("../controller/Creview");
 
 // /api-server
+
+//회원가입
+router.get("/join", Cuser.getJoin);
+router.post("/join", Cuser.postJoin);
+//로그인, 로그아웃 - 형석
+router.get("/login", Cuser.getLogin);
+router.post("/login", Cuser.postLogin);
+router.post("/logout", Cuser.postLogout);
+
 //회원정보 조회
 router.post("/profile/:useridx", Cuser.postProfile);
 router.patch("/profile/:useridx", upload.single("profileImage"), Cuser.updateProfile);
+
+// 리뷰 등록
+router.post("/review/:resvidx", Creview.addReview);
+// 리뷰 삭제
+router.delete("/review/:reviewidx", Creview.deleteReview);
+// 리뷰 조회 (회원 마이페이지)
+router.get("/review/:useridx", Creview.getUserReviews);
 
 module.exports = router;
