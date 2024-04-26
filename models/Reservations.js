@@ -21,9 +21,25 @@ const Reservations = function (Sequelize, DataTypes) {
         allowNull: false,
       },
       confirm: {
-        type: DataTypes.BOOLEAN,
+        type: DataTypes.ENUM("request", "approved", "refused", "done"),
         allowNull: false,
-        defaultValue: 0,
+        defaultValue: "request",
+      },
+      startTime: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      endTime: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      type: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+      },
+      animalNumber: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
       },
     },
     {

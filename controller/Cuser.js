@@ -33,6 +33,9 @@ exports.postJoin = async (req, res) => {
       img: defaultImgURL,
       usertype: usertype,
     });
+    // console.log(newUser.dataValues.useridx); idx
+    // type으로 if문 검증해서 sitter data추가
+    // idx는 useridx에 넣는거임
     req.session.user = newUser; // 세션에 사용자 정보 저장
     res.send({ msg: "회원가입 완료!", statusCode: 200 });
   } catch (error) {
