@@ -54,4 +54,7 @@ router.delete("/review/:reviewidx", Creview.deleteReview);
 // 리뷰 조회 (회원 마이페이지)
 router.get("/review/:useridx", Creview.getUserReviews);
 
+//예약 신청
+router.post("/resv/:sitteridx", Creservation.insertResv);
+
 module.exports = router;
