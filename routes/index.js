@@ -43,6 +43,13 @@ router.get("/login", Cuser.getLogin);
 router.post("/login", Cuser.postLogin);
 router.post("/logout", Cuser.postLogout);
 
+//예약 신청
+router.post("/resv/:sitteridx", Creservation.insertResv);
+//예약확정,거절, 취소 - 형석
+router.patch("/reservation/:resvidx/confirm", Creservation.confirmReservation);
+router.patch("/reservation/:resvidx/refused", Creservation.refusedReservation);
+router.delete("/reservation/:resvidx/delete", Creservation.deleteReservation);
+
 //회원정보 조회
 router.post("/profile/:useridx", Cuser.postProfile);
 router.patch("/profile/:useridx", upload.single("profileImage"), Cuser.updateProfile);
@@ -53,8 +60,5 @@ router.post("/review/:resvidx", upload.single("reviewImage"), Creview.addReview)
 router.delete("/review/:reviewidx", Creview.deleteReview);
 // 리뷰 조회 (회원 마이페이지)
 router.get("/review/:useridx", Creview.getUserReviews);
-
-//예약 신청
-router.post("/resv/:sitteridx", Creservation.insertResv);
 
 module.exports = router;
