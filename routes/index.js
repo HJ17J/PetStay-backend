@@ -40,6 +40,9 @@ router.post("/join", Cuser.postJoin);
 //로그인, 로그아웃 - 형석
 router.post("/login", Cuser.postLogin);
 router.post("/logout", Cuser.postLogout);
+
+//예약 신청
+router.post("/resv/:sitteridx", Creservation.insertResv);
 //예약확정,거절, 취소 - 형석
 router.patch("/reservation/:resvidx/confirm", Creservation.confirmReservation);
 router.patch("/reservation/:resvidx/refused", Creservation.refusedReservation);
