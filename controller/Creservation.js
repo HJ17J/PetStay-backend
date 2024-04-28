@@ -1,6 +1,42 @@
 const { where } = require("sequelize");
 const model = require("../models");
 
+//setInterval - ("request", "approved", "refused", "done") 자정에 approved -> done으로 변경
+async function updateConfirmStatus() {
+  try {
+    // 오늘 날짜
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    await model.Reservations.update(
+      { confirm: "done" },
+      {
+        where: {
+          date: { [model.Sequelize.Op.lt]: today },
+          confirm: "approved",
+        },
+      }
+    );
+
+    console.log("예약 내역 업데이트 완료");
+  } catch (error) {
+    console.error("예약 내역 업데이트 중 오류 발생>>", error);
+  }
+}
+
+function runAtMidnight() {
+  // 자정까지 남은 시간을 계산
+  const now = new Date();
+  const midnight = new Date(now);
+  midnight.setHours(24, 0, 0, 0);
+  const timeUntilMidnight = midnight.getTime() - now.getTime();
+
+  setInterval(updateConfirmStatus, timeUntilMidnight);
+}
+
+// 매일 자정 실행
+runAtMidnight();
+
 exports.insertResv = async (req, res) => {
   try {
     const { sitteridx } = req.params; //sitteridx
