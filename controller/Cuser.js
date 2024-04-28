@@ -1,6 +1,7 @@
 const { where, Op } = require("sequelize");
 const model = require("../models");
 const bcrypt = require("bcrypt");
+const { EMRServerless } = require("aws-sdk");
 
 // 회원가입 -형석
 const salt = 10;
@@ -90,6 +91,36 @@ exports.postLogout = (req, res) => {
     res.send({ message: "성공적으로 로그아웃되었습니다.", statusCode: 200 });
     // res.redirect("/")
   });
+};
+
+//회원 탈퇴
+exports.deleteProfile = async (req, res) => {
+  const { useridx } = req.params; // URL 파라미터에서 useridx 추출
+  const { userpw } = req.body; // 요청 본문에서 비밀번호 추출
+  try {
+    // 사용자 조회
+    const user = await model.Users.findByPk(useridx);
+    console.log("user >>> ", user);
+    if (!user) {
+      return res.status(404).send({ message: "사용자를 찾을 수 없습니다." });
+    }
+    // 비밀번호 비교
+    if (!userpw || !user.userpw) {
+      return res.status(400).send({ message: "비밀번호 입력이 필요합니다." });
+    }
+    const isMatch = await bcrypt.compare(userpw, user.userpw);
+    if (!isMatch) {
+      return res.status(401).send({ message: "비밀번호가 다릅니다." });
+    }
+    // 사용자 삭제
+    await model.Users.destroy({
+      where: { useridx: user.useridx },
+    });
+    res.send({ message: "회원 탈퇴가 완료되었습니다." });
+  } catch (error) {
+    console.log(`회원탈퇴 중 오류 발생 : ${error.message}`);
+    res.status(500).send("회원탈퇴 중 오류가 발생했습니다.");
+  }
 };
 
 exports.postProfile = async (req, res) => {

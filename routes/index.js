@@ -35,8 +35,9 @@ const Creview = require("../controller/Creview");
 
 // /api-server
 
-//회원가입
+//회원가입, 회원탈퇴 - 형석
 router.post("/join", Cuser.postJoin);
+router.delete("/profile/:useridx", Cuser.deleteProfile);
 //로그인, 로그아웃 - 형석
 router.post("/login", Cuser.postLogin);
 router.post("/logout", Cuser.postLogout);
