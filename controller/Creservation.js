@@ -42,11 +42,11 @@ exports.insertResv = async (req, res) => {
     const { sitteridx } = req.params; //sitteridx
     const useridx = req.session.user.id; //useridx
     // const useridx = 2; //useridx test용
-    const { content, date, startTime, endTime, type, animalNumber } = req.body;
+    const { content, date, startTime, endTime, type, animalNumber } = req.body.data;
 
-    // if (!useridx) {
-    //   res.status(200).send({ msg: "session이 만료되었습니다" });
-    // }
+    if (!useridx) {
+      res.status(200).send({ msg: "session이 만료되었습니다" });
+    }
 
     //시급 계산
     const sitterPay = await model.Sitters.findOne({
@@ -54,7 +54,7 @@ exports.insertResv = async (req, res) => {
       where: { useridx: sitteridx },
     });
     const time = endTime - startTime;
-    const totalPrice = parseInt(sitterPay.pay) * time * Number(animalNumber);
+    const totalPrice = parseInt(sitterPay.dataValues.pay) * Number(time) * Number(animalNumber);
     // console.log("총금액>>", totalPrice);
 
     //예약입력
