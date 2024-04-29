@@ -35,8 +35,10 @@ const Creview = require("../controller/Creview");
 
 // /api-server
 
-//회원가입, 회원탈퇴 - 형석
+//회원가입, 회원탈퇴, userid, name 중복확인 - 형석
 router.post("/join", Cuser.postJoin);
+router.post("/idCheck", Cuser.idCheck);
+router.post("/nameCheck", Cuser.nameCheck);
 router.delete("/profile/:useridx", Cuser.deleteProfile);
 //회원정보 조회
 router.post("/profile/:useridx", Cuser.postProfile);
