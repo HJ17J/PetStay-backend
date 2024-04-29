@@ -44,9 +44,9 @@ exports.insertResv = async (req, res) => {
     // const useridx = 2; //useridx test용
     const { content, date, startTime, endTime, type, animalNumber } = req.body;
 
-    if (!useridx) {
-      res.status(200).send({ msg: "session이 만료되었습니다" });
-    }
+    // if (!useridx) {
+    //   res.status(200).send({ msg: "session이 만료되었습니다" });
+    // }
 
     //시급 계산
     const sitterPay = await model.Sitters.findOne({
@@ -128,5 +128,24 @@ exports.deleteReservation = async (req, res) => {
   } catch (error) {
     console.error("예약 취소 중 오류 발생");
     res.status(500).send({ message: "예약 취소 중, 오류가 발생했습니다." });
+  }
+};
+
+exports.getDateResv = async (req, res) => {
+  try {
+    const { sitteridx } = req.params;
+    const { date } = req.body;
+    console.log("날짜!!", date);
+    const reservation = await model.Reservations.findAll({
+      where: {
+        sitteridx,
+        date,
+      },
+    });
+    console.log("예약!!!", reservation);
+    res.send({ reservation });
+  } catch (error) {
+    console.error("서버 에러 발생");
+    res.status(500).send({ message: "예약 내역 조회 중 오류가 발생했습니다." });
   }
 };
