@@ -4,17 +4,17 @@ const model = require("../models");
 exports.addReview = async (req, res) => {
   try {
     const { useridx, sitteridx, content, rate } = req.body;
-    const img = req.file.location ? req.file.location : null;
+    const img = req.file?.location ? req.file.location : null;
 
-    // 예약 확정 여부 확인 (추후 회원 session 추가하여 비교)
+    // 예약 확정 여부 조회
     const { confirm: isConfirmed } = await model.Reservations.findOne({
       attributes: ["confirm"],
       where: { resvidx: req.params.resvidx },
     });
 
-    // 확정된 예약이 아닐 경우
-    if (!isConfirmed) {
-      return res.status(400).json({ isSuccess: false, msg: "확정된 예약이 아님" });
+    // 완료된 예약 건이 아닐 경우
+    if (isConfirmed != "done") {
+      return res.status(400).json({ isSuccess: false, msg: "서비스 완료 시점이 아님" });
     }
 
     // 해당 예약 건에 리뷰가 존재하지 않는 경우에만 리뷰 추가
@@ -50,15 +50,19 @@ exports.addReview = async (req, res) => {
 exports.deleteReview = async (req, res) => {
   try {
     const reviewidx = req.params.reviewidx;
-    // 작성자 본인 확인 (추후 회원 session 추가하여 비교)
-    // const { useridx } = model.Reviews.findOne({
-    //   attributes: ["useridx"],
-    //   where: { reviewidx: reviewidx },
-    // });
-    // 리뷰 삭제
-    const result = await model.Reviews.destroy({ where: { reviewidx: reviewidx } });
-    if (result) {
+
+    // 작성자 본인 확인
+    const { useridx } = model.Reviews.findOne({
+      attributes: ["useridx"],
+      where: { reviewidx: reviewidx },
+    });
+
+    // 본인이 작성한 글인 경우에만 리뷰 삭제
+    if (req.session.user.id === useridx) {
+      const result = await model.Reviews.destroy({ where: { reviewidx: reviewidx } });
       return res.status(200).json({ isSuccess: true, msg: "리뷰 삭제 성공" });
+    } else {
+      return res.status(403).json({ isSuccess: false, msg: "접근 권한 없음" });
     }
   } catch (error) {
     res.status(500).json({ isSuccess: false, msg: "리뷰 삭제 실패" });
@@ -68,6 +72,7 @@ exports.deleteReview = async (req, res) => {
 // 리뷰 조회 (회원 마이페이지)
 exports.getUserReviews = async (req, res) => {
   try {
+    // 추후 페이지네이션 추가 필요
     const result = await model.Reviews.findAll({ where: { useridx: req.params.useridx } });
     const reviews = result.map((el) => el.dataValues);
     res.status(200).json({ isSuccess: true, data: reviews });

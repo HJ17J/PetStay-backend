@@ -61,4 +61,7 @@ router.delete("/review/:reviewidx", Creview.deleteReview);
 // 리뷰 조회 (회원 마이페이지)
 router.get("/review/:useridx", Creview.getUserReviews);
 
+// 시터 상세 정보
+router.get("/sitter/:useridx", Cuser.getSitterInfo);
+
 module.exports = router;
