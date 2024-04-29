@@ -76,6 +76,41 @@ exports.postJoin = async (req, res) => {
     res.status(500).send("회원가입 실패(서버 오류)");
   }
 };
+exports.idCheck = async (req, res) => {
+  try {
+    const { userid } = req.body;
+    const idCheck = await model.Users.findOne({
+      where: { userid: userid },
+    });
+    if (idCheck) {
+      return res.status(409).send({
+        message: "중복된 아이디입니다.",
+      });
+    }
+    res.send({ message: "사용가능한 아이디 입니다." });
+  } catch (error) {
+    console.error("아이디 중복 확인 중 에러 발생", error);
+    res.status(500).send("아이디 중복 확인 실패");
+  }
+};
+
+exports.nameCheck = async (req, res) => {
+  try {
+    const { name } = req.body;
+    const nameCheck = await model.Users.findOne({
+      where: { name: name },
+    });
+    if (nameCheck) {
+      return res.status(409).send({
+        message: "중복된 닉네임입니다.",
+      });
+    }
+    res.send({ message: "사용가능한 닉네임입니다." });
+  } catch (error) {
+    console.error("닉네임 중복 확인 중 에러 발생", error);
+    res.status(500).send("닉네임 중복 확인 실패");
+  }
+};
 
 exports.postLogin = async (req, res) => {
   const { userid, userpw } = req.body;
