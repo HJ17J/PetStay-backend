@@ -48,6 +48,7 @@ router.post("/logout", Cuser.postLogout);
 
 //예약 신청
 router.post("/resv/:sitteridx", Creservation.insertResv);
+router.post("/resvDate/:sitteridx", Creservation.getDateResv);
 //예약확정,거절, 취소 - 형석
 router.patch("/reservation/:resvidx/confirm", Creservation.confirmReservation);
 router.patch("/reservation/:resvidx/refused", Creservation.refusedReservation);
@@ -60,9 +61,9 @@ router.delete("/review/:reviewidx", Creview.deleteReview);
 // 리뷰 조회 (회원 마이페이지)
 router.get("/review/:useridx", Creview.getUserReviews);
 
+// 시터 목록 조회 + 검색
+router.get("/sitter", Cuser.getSitterLists);
 // 시터 상세 정보
 router.get("/sitter/:useridx", Cuser.getSitterInfo);
-// 시터 전체 조회
-router.get("/sitter", Cuser.getAllSitters);
 
 module.exports = router;

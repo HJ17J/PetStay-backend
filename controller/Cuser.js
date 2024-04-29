@@ -7,6 +7,7 @@ const { EMRServerless } = require("aws-sdk");
 // 회원가입 -형석
 const salt = 10;
 exports.postJoin = async (req, res) => {
+  const t = await model.sequelize.transaction();
   try {
     console.log("req.body >>> ", req.body);
     const {
@@ -26,40 +27,49 @@ exports.postJoin = async (req, res) => {
       where: {
         [Op.or]: [{ userid: userid }, { name: name }],
       },
+      transaction: t,
     });
     if (userExists) {
+      await t.rollback();
       return res.status(409).send({
         message: userExists.userid === userid ? "중복된 아이디입니다." : "중복된 닉네임입니다.",
       });
     }
     const defaultImgURL = "/static/joinImg.png"; // 이미지 경로 수정
     const hashedPassword = await bcrypt.hash(userpw, salt);
-    const newUser = await model.Users.create({
-      userid: userid,
-      userpw: hashedPassword,
-      name: name,
-      address: address,
-      img: defaultImgURL,
-      usertype: usertype,
-    });
+    const newUser = await model.Users.create(
+      {
+        userid: userid,
+        userpw: hashedPassword,
+        name: name,
+        address: address,
+        img: defaultImgURL,
+        usertype: usertype,
+      },
+      { transaction: t }
+    );
 
     if (usertype === "sitter") {
       if (!type || !oneLineIntro || !selfIntroduction || !pay) {
+        await t.rollback();
         return res.status(400).send({ message: "모든 sitter 정보를 입력해야 합니다." });
       }
-      await model.Sitters.create({
-        useridx: newUser.useridx, // 새롭게 생성된 유저의 ID
-        type,
-        license,
-        career,
-        oneLineIntro,
-        selfIntroduction,
-        pay,
-        confirm: true,
-      });
+      await model.Sitters.create(
+        {
+          useridx: newUser.useridx, // 새롭게 생성된 유저의 ID
+          type,
+          license,
+          career,
+          oneLineIntro,
+          selfIntroduction,
+          pay,
+          confirm: true,
+        },
+        { transaction: t }
+      );
     }
+    await t.commit();
     req.session.user = newUser; // 세션에 사용자 정보 저장
-    console.log("session 정보 >>> ", newUser);
     res.send({ msg: "회원가입 완료!", statusCode: 200 });
   } catch (error) {
     console.log("회원가입 중 에러 발생", error);
@@ -329,14 +339,21 @@ exports.getSitterInfo = async (req, res) => {
   }
 };
 
-// 펫시터 목록 조회
-exports.getAllSitters = async (req, res) => {
+// 펫시터 목록 조회 (+쿼리스트링 검색)
+exports.getSitterLists = async (req, res) => {
   try {
+    let where = { usertype: "sitter" };
+    if (Object.keys(req.query).length) {
+      const [option] = Object.keys(req.query);
+      const [keyword] = Object.values(req.query);
+      where[option] = { [Op.substring]: keyword };
+    }
     const data = await Users.findAll({
       attributes: [
         "useridx",
         "userid",
         "name",
+        "address",
         [Sequelize.literal("COALESCE(Sitter.oneLineIntro, '')"), "oneLineIntro"],
         "img",
         [Sequelize.literal("COALESCE(COUNT(Reviews.reviewidx), 0)"), "review_count"],
@@ -354,9 +371,7 @@ exports.getAllSitters = async (req, res) => {
           required: false,
         },
       ],
-      where: {
-        usertype: "sitter",
-      },
+      where: where,
       group: ["Users.useridx", "Sitter.oneLineIntro"],
     });
     res.status(200).json({ isSuccess: true, data: data });
