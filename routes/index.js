@@ -38,6 +38,10 @@ const Creview = require("../controller/Creview");
 //회원가입, 회원탈퇴 - 형석
 router.post("/join", Cuser.postJoin);
 router.delete("/profile/:useridx", Cuser.deleteProfile);
+//회원정보 조회
+router.post("/profile/:useridx", Cuser.postProfile);
+router.patch("/profile/:useridx", upload.single("profileImage"), Cuser.updateProfile);
+router.patch("/profile/pwUpdate/:useridx", Cuser.updatePw);
 //로그인, 로그아웃 - 형석
 router.post("/login", Cuser.postLogin);
 router.post("/logout", Cuser.postLogout);
@@ -48,10 +52,6 @@ router.post("/resv/:sitteridx", Creservation.insertResv);
 router.patch("/reservation/:resvidx/confirm", Creservation.confirmReservation);
 router.patch("/reservation/:resvidx/refused", Creservation.refusedReservation);
 router.delete("/reservation/:resvidx/delete", Creservation.deleteReservation);
-
-//회원정보 조회
-router.post("/profile/:useridx", Cuser.postProfile);
-router.patch("/profile/:useridx", upload.single("profileImage"), Cuser.updateProfile);
 
 // 리뷰 등록
 router.post("/review/:resvidx", upload.single("reviewImage"), Creview.addReview);

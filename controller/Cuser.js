@@ -9,7 +9,19 @@ const salt = 10;
 exports.postJoin = async (req, res) => {
   try {
     console.log("req.body >>> ", req.body);
-    const { userid, userpw, name, address, usertype, ...sitterInfo } = req.body;
+    const {
+      userid,
+      userpw,
+      name,
+      address,
+      usertype,
+      type,
+      license,
+      career,
+      oneLineIntro,
+      selfIntroduction,
+      pay,
+    } = req.body;
     const userExists = await model.Users.findOne({
       where: {
         [Op.or]: [{ userid: userid }, { name: name }],
@@ -30,19 +42,24 @@ exports.postJoin = async (req, res) => {
       img: defaultImgURL,
       usertype: usertype,
     });
+
     if (usertype === "sitter") {
+      if (!type || !oneLineIntro || !selfIntroduction || !pay) {
+        return res.status(400).send({ message: "모든 sitter 정보를 입력해야 합니다." });
+      }
       await model.Sitters.create({
         useridx: newUser.useridx, // 새롭게 생성된 유저의 ID
-        type: sitterInfo.type,
-        license: sitterInfo.license,
-        career: sitterInfo.career,
-        oneLineIntro: sitterInfo.oneLineIntro,
-        selfIntroduction: sitterInfo.selfIntroduction,
-        pay: sitterInfo.pay,
-        confirm: sitterInfo.confirm,
+        type,
+        license,
+        career,
+        oneLineIntro,
+        selfIntroduction,
+        pay,
+        confirm: true,
       });
     }
     req.session.user = newUser; // 세션에 사용자 정보 저장
+    console.log("session 정보 >>> ", newUser);
     res.send({ msg: "회원가입 완료!", statusCode: 200 });
   } catch (error) {
     console.log("회원가입 중 에러 발생", error);
@@ -155,12 +172,11 @@ exports.updateProfile = async (req, res) => {
   try {
     const { useridx } = req.params;
     const userData = await model.Users.findOne({ where: { useridx } });
-    const { userid, userpw, name, address, type, license, career, selfIntroduction, pay } =
+    const { userid, name, address, type, license, career, oneLineIntro, selfIntroduction, pay } =
       req.body;
 
     let updateFields = {
       userid,
-      userpw,
       name,
       address,
     };
@@ -181,6 +197,7 @@ exports.updateProfile = async (req, res) => {
           type,
           license,
           career,
+          oneLineIntro,
           selfIntroduction,
           pay,
         },
@@ -192,6 +209,32 @@ exports.updateProfile = async (req, res) => {
     } else {
       res.status(200).send({ msg: "일반 회원수정 완료" });
     }
+  } catch (err) {
+    console.log("err", err);
+    res.status(500).send("server err발생!!");
+  }
+};
+
+exports.updatePw = async (req, res) => {
+  try {
+    const { useridx } = req.params;
+    const { userpw, newpw } = req.body;
+
+    //현재 비밀번호 검증
+    const password = await model.Users.findOne({
+      attributes: ["userpw"],
+      where: { useridx },
+    });
+    console.log(password.userpw);
+    const match = await bcrypt.compare(userpw, password.userpw);
+    if (!match) {
+      return res.status(401).json({ message: "비밀번호가 일치하지 않습니다." });
+    }
+    //비밀번호 수정
+    const hashedPassword = await bcrypt.hash(newpw, salt);
+    await model.Users.update({ userpw: hashedPassword }, { where: { useridx } });
+
+    res.status(200).send({ message: "비밀번호 수정 완료" });
   } catch (err) {
     console.log("err", err);
     res.status(500).send("server err발생!!");
