@@ -317,10 +317,6 @@ exports.getSitterInfo = async (req, res) => {
       return el.dataValues;
     });
 
-    console.log(sitterInfo);
-    console.log(reservations);
-    console.log(reviews);
-
     res.status(200).json({
       isSuccess: true,
       sitterInfo: sitterInfo,
@@ -330,5 +326,42 @@ exports.getSitterInfo = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ isSuccess: false, msg: "정보 조회 실패" });
+  }
+};
+
+// 펫시터 목록 조회
+exports.getAllSitters = async (req, res) => {
+  try {
+    const data = await Users.findAll({
+      attributes: [
+        "useridx",
+        "userid",
+        "name",
+        [Sequelize.literal("COALESCE(Sitter.oneLineIntro, '')"), "oneLineIntro"],
+        "img",
+        [Sequelize.literal("COALESCE(COUNT(Reviews.reviewidx), 0)"), "review_count"],
+        [Sequelize.literal("COALESCE(ROUND(AVG(Reviews.rate), 1), 0)"), "avg_rate"],
+      ],
+      include: [
+        {
+          model: Sitters,
+          attributes: [],
+          required: false,
+        },
+        {
+          model: Reviews,
+          attributes: [],
+          required: false,
+        },
+      ],
+      where: {
+        usertype: "sitter",
+      },
+      group: ["Users.useridx", "Sitter.oneLineIntro"],
+    });
+    res.status(200).json({ isSuccess: true, data: data });
+  } catch (error) {
+    console.log(error);
+    res.status(200).json({ isSuccess: false, msg: "목록 조회 실패" });
   }
 };

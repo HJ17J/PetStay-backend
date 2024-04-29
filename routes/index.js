@@ -62,5 +62,7 @@ router.get("/review/:useridx", Creview.getUserReviews);
 
 // 시터 상세 정보
 router.get("/sitter/:useridx", Cuser.getSitterInfo);
+// 시터 전체 조회
+router.get("/sitter", Cuser.getAllSitters);
 
 module.exports = router;
