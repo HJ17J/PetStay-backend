@@ -9,7 +9,7 @@ const Reservations = function (Sequelize, DataTypes) {
         allowNull: false,
       },
       date: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false,
       },
       content: {
