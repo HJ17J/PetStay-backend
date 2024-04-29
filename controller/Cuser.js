@@ -9,7 +9,19 @@ const salt = 10;
 exports.postJoin = async (req, res) => {
   try {
     console.log("req.body >>> ", req.body);
-    const { userid, userpw, name, address, usertype, ...sitterInfo } = req.body;
+    const {
+      userid,
+      userpw,
+      name,
+      address,
+      usertype,
+      type,
+      license,
+      career,
+      oneLineIntro,
+      selfIntroduction,
+      pay,
+    } = req.body;
     const userExists = await model.Users.findOne({
       where: {
         [Op.or]: [{ userid: userid }, { name: name }],
@@ -30,19 +42,24 @@ exports.postJoin = async (req, res) => {
       img: defaultImgURL,
       usertype: usertype,
     });
+
     if (usertype === "sitter") {
+      if (!type || !oneLineIntro || !selfIntroduction || !pay) {
+        return res.status(400).send({ message: "모든 sitter 정보를 입력해야 합니다." });
+      }
       await model.Sitters.create({
         useridx: newUser.useridx, // 새롭게 생성된 유저의 ID
-        type: sitterInfo.type,
-        license: sitterInfo.license,
-        career: sitterInfo.career,
-        oneLineIntro: sitterInfo.oneLineIntro,
-        selfIntroduction: sitterInfo.selfIntroduction,
-        pay: sitterInfo.pay,
-        confirm: sitterInfo.confirm,
+        type,
+        license,
+        career,
+        oneLineIntro,
+        selfIntroduction,
+        pay,
+        confirm: true,
       });
     }
     req.session.user = newUser; // 세션에 사용자 정보 저장
+    console.log("session 정보 >>> ", newUser);
     res.send({ msg: "회원가입 완료!", statusCode: 200 });
   } catch (error) {
     console.log("회원가입 중 에러 발생", error);
