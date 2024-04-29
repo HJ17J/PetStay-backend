@@ -2,18 +2,14 @@ const { where, Op } = require("sequelize");
 const model = require("../models");
 const { Users, Sitters, Reviews, sequelize, Sequelize } = require("../models");
 const bcrypt = require("bcrypt");
+const { EMRServerless } = require("aws-sdk");
 
-// 회원가입 페이지 렌더링 -형석
-exports.getJoin = (req, res) => {
-  // res.render("join");
-  res.send("---res.render(join)");
-};
 // 회원가입 -형석
 const salt = 10;
 exports.postJoin = async (req, res) => {
   try {
     console.log("req.body >>> ", req.body);
-    const { userid, userpw, name, address, usertype } = req.body;
+    const { userid, userpw, name, address, usertype, ...sitterInfo } = req.body;
     const userExists = await model.Users.findOne({
       where: {
         [Op.or]: [{ userid: userid }, { name: name }],
@@ -34,9 +30,18 @@ exports.postJoin = async (req, res) => {
       img: defaultImgURL,
       usertype: usertype,
     });
-    // console.log(newUser.dataValues.useridx); idx
-    // type으로 if문 검증해서 sitter data추가
-    // idx는 useridx에 넣는거임
+    if (usertype === "sitter") {
+      await model.Sitters.create({
+        useridx: newUser.useridx, // 새롭게 생성된 유저의 ID
+        type: sitterInfo.type,
+        license: sitterInfo.license,
+        career: sitterInfo.career,
+        oneLineIntro: sitterInfo.oneLineIntro,
+        selfIntroduction: sitterInfo.selfIntroduction,
+        pay: sitterInfo.pay,
+        confirm: sitterInfo.confirm,
+      });
+    }
     req.session.user = newUser; // 세션에 사용자 정보 저장
     res.send({ msg: "회원가입 완료!", statusCode: 200 });
   } catch (error) {
@@ -45,11 +50,6 @@ exports.postJoin = async (req, res) => {
   }
 };
 
-// 로그인 -형석
-exports.getLogin = (req, res) => {
-  // res.render("login");
-  res.send("---res.render(Login)");
-};
 exports.postLogin = async (req, res) => {
   const { userid, userpw } = req.body;
   try {
@@ -92,6 +92,36 @@ exports.postLogout = (req, res) => {
     res.send({ message: "성공적으로 로그아웃되었습니다.", statusCode: 200 });
     // res.redirect("/")
   });
+};
+
+//회원 탈퇴
+exports.deleteProfile = async (req, res) => {
+  const { useridx } = req.params; // URL 파라미터에서 useridx 추출
+  const { userpw } = req.body; // 요청 본문에서 비밀번호 추출
+  try {
+    // 사용자 조회
+    const user = await model.Users.findByPk(useridx);
+    console.log("user >>> ", user);
+    if (!user) {
+      return res.status(404).send({ message: "사용자를 찾을 수 없습니다." });
+    }
+    // 비밀번호 비교
+    if (!userpw || !user.userpw) {
+      return res.status(400).send({ message: "비밀번호 입력이 필요합니다." });
+    }
+    const isMatch = await bcrypt.compare(userpw, user.userpw);
+    if (!isMatch) {
+      return res.status(401).send({ message: "비밀번호가 다릅니다." });
+    }
+    // 사용자 삭제
+    await model.Users.destroy({
+      where: { useridx: user.useridx },
+    });
+    res.send({ message: "회원 탈퇴가 완료되었습니다." });
+  } catch (error) {
+    console.log(`회원탈퇴 중 오류 발생 : ${error.message}`);
+    res.status(500).send("회원탈퇴 중 오류가 발생했습니다.");
+  }
 };
 
 exports.postProfile = async (req, res) => {
