@@ -339,14 +339,21 @@ exports.getSitterInfo = async (req, res) => {
   }
 };
 
-// 펫시터 목록 조회
-exports.getAllSitters = async (req, res) => {
+// 펫시터 목록 조회 (+쿼리스트링 검색)
+exports.getSitterLists = async (req, res) => {
   try {
+    let where = { usertype: "sitter" };
+    if (Object.keys(req.query).length) {
+      const [option] = Object.keys(req.query);
+      const [keyword] = Object.values(req.query);
+      where[option] = { [Op.substring]: keyword };
+    }
     const data = await Users.findAll({
       attributes: [
         "useridx",
         "userid",
         "name",
+        "address",
         [Sequelize.literal("COALESCE(Sitter.oneLineIntro, '')"), "oneLineIntro"],
         "img",
         [Sequelize.literal("COALESCE(COUNT(Reviews.reviewidx), 0)"), "review_count"],
@@ -364,9 +371,7 @@ exports.getAllSitters = async (req, res) => {
           required: false,
         },
       ],
-      where: {
-        usertype: "sitter",
-      },
+      where: where,
       group: ["Users.useridx", "Sitter.oneLineIntro"],
     });
     res.status(200).json({ isSuccess: true, data: data });
