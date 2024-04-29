@@ -1,5 +1,6 @@
 const { where, Op } = require("sequelize");
 const model = require("../models");
+const { Users, Sitters, Reviews, sequelize, Sequelize } = require("../models");
 const bcrypt = require("bcrypt");
 
 // 회원가입 페이지 렌더링 -형석
@@ -164,5 +165,97 @@ exports.updateProfile = async (req, res) => {
   } catch (err) {
     console.log("err", err);
     res.status(500).send("server err발생!!");
+  }
+};
+
+// 펫시터 상세 정보 조회
+exports.getSitterInfo = async (req, res) => {
+  try {
+    /* 필요한 정보 목록
+        Users + Sitters,
+        Reservations,
+        Reviews + Users
+     */
+    // users, sitters join
+    const { useridx: sitteridx } = req.params;
+    const [sData] = await model.Users.findAll({
+      attributes: ["useridx", "userid", "name", "img", "usertype"],
+      where: { useridx: sitteridx },
+      include: [{ model: model.Sitters }],
+    });
+    const { useridx, userid, name, img, usertype } = sData.dataValues;
+    const { type, license, career, oneLineIntro, selfIntroduction, pay, confirm } =
+      sData.dataValues.Sitter.dataValues;
+
+    const sitterInfo = {
+      useridx,
+      userid,
+      name,
+      img,
+      usertype,
+      type,
+      license,
+      career,
+      oneLineIntro,
+      selfIntroduction,
+      pay,
+      confirm,
+    };
+
+    // 이번 달의 예약 정보만 가져오기 (추가 api 필요)
+    const curYear = new Date().getFullYear();
+    const curMonth = new Date().getMonth();
+    const reservations = await model.Reservations.findAll({
+      where: {
+        sitteridx: sitteridx,
+        createdAt: {
+          [Op.and]: {
+            [Op.gte]: new Date(curYear, curMonth, 1),
+            [Op.lt]: new Date(curYear, curMonth + 1, 1),
+          },
+        },
+      },
+    });
+    // 전체 예약 정보 가져오기
+    // const reservations = await model.Reservations.findAll({
+    //   where: { sitteridx: sitteridx },
+    // });
+
+    // 리뷰 페이지네이션 추후 추가
+    const rvData = await model.Reviews.findAll({
+      include: [
+        {
+          model: model.Users,
+          on: { "$User.useridx$": { [Op.eq]: sequelize.col("Reviews.useridx") } },
+          attributes: ["useridx", "name", "img"],
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+      where: { sitteridx: sitteridx },
+    });
+
+    const reviews = rvData.map((el) => {
+      const {
+        User: { name, img },
+      } = el.dataValues;
+      el.dataValues.name = name;
+      el.dataValues.img = img;
+      delete el.dataValues.User;
+      return el.dataValues;
+    });
+
+    console.log(sitterInfo);
+    console.log(reservations);
+    console.log(reviews);
+
+    res.status(200).json({
+      isSuccess: true,
+      sitterInfo: sitterInfo,
+      reservations: reservations,
+      reviews: reviews,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ isSuccess: false, msg: "정보 조회 실패" });
   }
 };
