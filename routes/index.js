@@ -35,8 +35,10 @@ const Creview = require("../controller/Creview");
 
 // /api-server
 
-//회원가입, 회원탈퇴 - 형석
+//회원가입, 회원탈퇴, userid, name 중복확인 - 형석
 router.post("/join", Cuser.postJoin);
+router.post("/idCheck", Cuser.idCheck);
+router.post("/nameCheck", Cuser.nameCheck);
 router.delete("/profile/:useridx", Cuser.deleteProfile);
 //회원정보 조회
 router.post("/profile/:useridx", Cuser.postProfile);
@@ -61,9 +63,9 @@ router.delete("/review/:reviewidx", Creview.deleteReview);
 // 리뷰 조회 (회원 마이페이지)
 router.get("/review/:useridx", Creview.getUserReviews);
 
+// 시터 목록 조회 + 검색
+router.get("/sitter", Cuser.getSitterLists);
 // 시터 상세 정보
 router.get("/sitter/:useridx", Cuser.getSitterInfo);
-// 시터 전체 조회
-router.get("/sitter", Cuser.getAllSitters);
 
 module.exports = router;
