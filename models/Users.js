@@ -32,12 +32,7 @@ const Users = function (Sequelize, DataTypes) {
         type: DataTypes.ENUM("user", "sitter", "admin"),
         allowNull: false,
       },
-      // google 로그인 사용자의 경우 사용
       googleId: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      email: {
         type: DataTypes.STRING,
         allowNull: true,
       },
