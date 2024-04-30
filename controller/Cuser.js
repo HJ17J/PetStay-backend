@@ -84,10 +84,11 @@ exports.idCheck = async (req, res) => {
     });
     if (idCheck) {
       return res.status(409).send({
+        isAvailable: false,
         message: "중복된 아이디입니다.",
       });
     }
-    res.send({ message: "사용가능한 아이디 입니다." });
+    res.send({ isAvailable: true, message: "사용가능한 아이디 입니다." });
   } catch (error) {
     console.error("아이디 중복 확인 중 에러 발생", error);
     res.status(500).send("아이디 중복 확인 실패");
@@ -102,10 +103,11 @@ exports.nameCheck = async (req, res) => {
     });
     if (nameCheck) {
       return res.status(409).send({
+        isAvailable: false,
         message: "중복된 닉네임입니다.",
       });
     }
-    res.send({ message: "사용가능한 닉네임입니다." });
+    res.send({ isAvailable: true, message: "사용가능한 닉네임입니다." });
   } catch (error) {
     console.error("닉네임 중복 확인 중 에러 발생", error);
     res.status(500).send("닉네임 중복 확인 실패");
