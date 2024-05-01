@@ -392,6 +392,7 @@ exports.getSitterInfo = async (req, res) => {
       sitterInfo: sitterInfo,
       reservations: reservations,
       reviews: reviews,
+      rvNumberData: rvNumberData,
     });
   } catch (error) {
     console.log(error);
