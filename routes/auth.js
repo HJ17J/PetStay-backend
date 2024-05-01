@@ -3,7 +3,7 @@ const passport = require("passport");
 const router = express.Router();
 
 // google 로그인 라우트
-router.get("/google", passport.authenticate("google", { scope: ["profile"] }));
+router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 // google 로그인 콜백 라우트
 router.get(
   "/google/callback",
