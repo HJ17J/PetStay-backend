@@ -391,10 +391,12 @@ exports.getSitterLists = async (req, res) => {
         "userid",
         "name",
         "address",
-        [Sequelize.literal("COALESCE(Sitter.oneLineIntro, '')"), "oneLineIntro"],
         "img",
-        [Sequelize.literal("COALESCE(COUNT(Reviews.reviewidx), 0)"), "review_count"],
-        [Sequelize.literal("COALESCE(ROUND(AVG(Reviews.rate), 1), 0)"), "avg_rate"],
+        [Sequelize.literal("Sitter.type"), "animalType"],
+        [Sequelize.literal("COALESCE(Sitter.pay, 0)"), "pay"],
+        [Sequelize.literal("Sitter.oneLineIntro"), "shortIntro"],
+        [Sequelize.literal("COALESCE(COUNT(Reviews.reviewidx), 0)"), "reviewCount"],
+        [Sequelize.literal("COALESCE(ROUND(AVG(Reviews.rate), 1), 0)"), "rating"],
       ],
       include: [
         {
@@ -409,8 +411,10 @@ exports.getSitterLists = async (req, res) => {
         },
       ],
       where: where,
-      group: ["Users.useridx", "Sitter.oneLineIntro"],
+      group: ["Users.useridx", "Sitter.oneLineIntro", "Sitter.pay", "Sitter.type"],
+      order: [["useridx", "ASC"]],
     });
+    console.log(data);
     res.status(200).json({ isSuccess: true, data: data });
   } catch (error) {
     console.log(error);
