@@ -68,4 +68,7 @@ router.get("/sitter", Cuser.getSitterLists);
 // 시터 상세 정보
 router.get("/sitter/:useridx", Cuser.getSitterInfo);
 
+//chat관련 router
+router.get("/chat/:sitteridx", Cchat.getChats);
+
 module.exports = router;
