@@ -16,13 +16,24 @@ aws.config.update({
 
 const s3 = new aws.S3();
 
-const upload = multer({
+const uploadProfile = multer({
   storage: multerS3({
     s3: s3,
     bucket: process.env.AWS_S3_BUCKET,
-    acl: "public-read", //파일 접근 권한
+    acl: "public-read",
     key: (req, file, cb) => {
-      cb(null, Date.now().toString() + "-" + file.originalname);
+      cb(null, "profile-img/" + Date.now().toString() + "-" + file.originalname);
+    },
+  }),
+});
+
+const uploadReview = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: process.env.AWS_S3_BUCKET,
+    acl: "public-read",
+    key: (req, file, cb) => {
+      cb(null, "review-img/" + Date.now().toString() + "-" + file.originalname);
     },
   }),
 });
@@ -42,7 +53,7 @@ router.post("/nameCheck", Cuser.nameCheck);
 router.delete("/profile/:useridx", Cuser.deleteProfile);
 //회원정보 조회
 router.post("/profile/:useridx", Cuser.postProfile);
-router.patch("/profile/:useridx", upload.single("profileImage"), Cuser.updateProfile);
+router.patch("/profile/:useridx", uploadProfile.single("profileImage"), Cuser.updateProfile);
 router.patch("/profile/pwUpdate/:useridx", Cuser.updatePw);
 //로그인, 로그아웃 - 형석
 router.post("/login", Cuser.postLogin);
@@ -57,7 +68,7 @@ router.patch("/reservation/:resvidx/refused", Creservation.refusedReservation);
 router.delete("/reservation/:resvidx/delete", Creservation.deleteReservation);
 
 // 리뷰 등록
-router.post("/review/:resvidx", upload.single("reviewImage"), Creview.addReview);
+router.post("/review/:resvidx", uploadReview.single("reviewImage"), Creview.addReview);
 // 리뷰 삭제
 router.delete("/review/:reviewidx", Creview.deleteReview);
 // 리뷰 조회 (회원 마이페이지)
