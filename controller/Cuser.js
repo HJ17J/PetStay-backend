@@ -142,6 +142,7 @@ exports.postLogin = async (req, res) => {
       };
       res.send({ msg: `환영합니다. ${user.name}님!`, statusCode: 200 });
     });
+    console.log(req.session);
   } catch (error) {
     console.error(`로그인 중 에러 발생 : ${error.message}`);
     res.status(500).send("로그인 중 오류가 발생했습니다.");
@@ -190,6 +191,7 @@ exports.deleteProfile = async (req, res) => {
 
 exports.postProfile = async (req, res) => {
   try {
+    console.log("id>>>>>>>>>>>>>>>>", req.session.user.id);
     const { useridx } = req.params;
     const userData = await model.Users.findOne({
       where: { useridx },
@@ -297,13 +299,15 @@ exports.getSitterInfo = async (req, res) => {
         Reviews + Users
      */
     // users, sitters join
+    // const { useridx: sitteridx } = req.params;
     const { useridx: sitteridx } = req.params;
     const [sData] = await model.Users.findAll({
-      attributes: ["useridx", "userid", "name", "img", "usertype"],
+      attributes: ["useridx", "userid", "name", "img", "usertype", "address"],
       where: { useridx: sitteridx },
       include: [{ model: model.Sitters }],
     });
-    const { useridx, userid, name, img, usertype } = sData.dataValues;
+    console.log("sData>>>>>>>>>>>>>>>", sData);
+    const { useridx, userid, name, img, usertype, address } = sData.dataValues;
     const { type, license, career, oneLineIntro, selfIntroduction, pay, confirm } =
       sData.dataValues.Sitter.dataValues;
 
@@ -313,6 +317,7 @@ exports.getSitterInfo = async (req, res) => {
       name,
       img,
       usertype,
+      address,
       type,
       license,
       career,
@@ -353,6 +358,24 @@ exports.getSitterInfo = async (req, res) => {
       order: [["createdAt", "DESC"]],
       where: { sitteridx: sitteridx },
     });
+    const rvNumberData = await model.Reviews.findAll({
+      attributes: [
+        [
+          sequelize.fn("COALESCE", sequelize.fn("COUNT", sequelize.col("reviewidx")), 0),
+          "reviewCount",
+        ],
+        [
+          sequelize.fn(
+            "COALESCE",
+            sequelize.fn("ROUND", sequelize.fn("AVG", sequelize.col("rate")), 1),
+            0
+          ),
+          "averageRating",
+        ],
+      ],
+      where: { sitteridx: sitteridx },
+    });
+    console.log("review 숫자 데이터", rvNumberData);
 
     const reviews = rvData.map((el) => {
       const {
@@ -369,6 +392,7 @@ exports.getSitterInfo = async (req, res) => {
       sitterInfo: sitterInfo,
       reservations: reservations,
       reviews: reviews,
+      rvNumberData: rvNumberData,
     });
   } catch (error) {
     console.log(error);
