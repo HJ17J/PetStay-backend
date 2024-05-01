@@ -84,10 +84,11 @@ exports.idCheck = async (req, res) => {
     });
     if (idCheck) {
       return res.status(409).send({
+        isAvailable: false,
         message: "중복된 아이디입니다.",
       });
     }
-    res.send({ message: "사용가능한 아이디 입니다." });
+    res.send({ isAvailable: true, message: "사용가능한 아이디 입니다." });
   } catch (error) {
     console.error("아이디 중복 확인 중 에러 발생", error);
     res.status(500).send("아이디 중복 확인 실패");
@@ -102,10 +103,11 @@ exports.nameCheck = async (req, res) => {
     });
     if (nameCheck) {
       return res.status(409).send({
+        isAvailable: false,
         message: "중복된 닉네임입니다.",
       });
     }
-    res.send({ message: "사용가능한 닉네임입니다." });
+    res.send({ isAvailable: true, message: "사용가능한 닉네임입니다." });
   } catch (error) {
     console.error("닉네임 중복 확인 중 에러 발생", error);
     res.status(500).send("닉네임 중복 확인 실패");
@@ -140,6 +142,7 @@ exports.postLogin = async (req, res) => {
       };
       res.send({ msg: `환영합니다. ${user.name}님!`, statusCode: 200 });
     });
+    console.log(req.session);
   } catch (error) {
     console.error(`로그인 중 에러 발생 : ${error.message}`);
     res.status(500).send("로그인 중 오류가 발생했습니다.");
@@ -188,6 +191,7 @@ exports.deleteProfile = async (req, res) => {
 
 exports.postProfile = async (req, res) => {
   try {
+    console.log("id>>>>>>>>>>>>>>>>", req.session.user.id);
     const { useridx } = req.params;
     const userData = await model.Users.findOne({
       where: { useridx },
@@ -295,13 +299,15 @@ exports.getSitterInfo = async (req, res) => {
         Reviews + Users
      */
     // users, sitters join
+    // const { useridx: sitteridx } = req.params;
     const { useridx: sitteridx } = req.params;
     const [sData] = await model.Users.findAll({
-      attributes: ["useridx", "userid", "name", "img", "usertype"],
+      attributes: ["useridx", "userid", "name", "img", "usertype", "address"],
       where: { useridx: sitteridx },
       include: [{ model: model.Sitters }],
     });
-    const { useridx, userid, name, img, usertype } = sData.dataValues;
+    console.log("sData>>>>>>>>>>>>>>>", sData);
+    const { useridx, userid, name, img, usertype, address } = sData.dataValues;
     const { type, license, career, oneLineIntro, selfIntroduction, pay, confirm } =
       sData.dataValues.Sitter.dataValues;
 
@@ -311,6 +317,7 @@ exports.getSitterInfo = async (req, res) => {
       name,
       img,
       usertype,
+      address,
       type,
       license,
       career,
@@ -351,6 +358,24 @@ exports.getSitterInfo = async (req, res) => {
       order: [["createdAt", "DESC"]],
       where: { sitteridx: sitteridx },
     });
+    const rvNumberData = await model.Reviews.findAll({
+      attributes: [
+        [
+          sequelize.fn("COALESCE", sequelize.fn("COUNT", sequelize.col("reviewidx")), 0),
+          "reviewCount",
+        ],
+        [
+          sequelize.fn(
+            "COALESCE",
+            sequelize.fn("ROUND", sequelize.fn("AVG", sequelize.col("rate")), 1),
+            0
+          ),
+          "averageRating",
+        ],
+      ],
+      where: { sitteridx: sitteridx },
+    });
+    console.log("review 숫자 데이터", rvNumberData);
 
     const reviews = rvData.map((el) => {
       const {
@@ -367,6 +392,7 @@ exports.getSitterInfo = async (req, res) => {
       sitterInfo: sitterInfo,
       reservations: reservations,
       reviews: reviews,
+      rvNumberData: rvNumberData,
     });
   } catch (error) {
     console.log(error);
@@ -389,10 +415,12 @@ exports.getSitterLists = async (req, res) => {
         "userid",
         "name",
         "address",
-        [Sequelize.literal("COALESCE(Sitter.oneLineIntro, '')"), "oneLineIntro"],
         "img",
-        [Sequelize.literal("COALESCE(COUNT(Reviews.reviewidx), 0)"), "review_count"],
-        [Sequelize.literal("COALESCE(ROUND(AVG(Reviews.rate), 1), 0)"), "avg_rate"],
+        [Sequelize.literal("Sitter.type"), "animalType"],
+        [Sequelize.literal("COALESCE(Sitter.pay, 0)"), "pay"],
+        [Sequelize.literal("Sitter.oneLineIntro"), "shortIntro"],
+        [Sequelize.literal("COALESCE(COUNT(Reviews.reviewidx), 0)"), "reviewCount"],
+        [Sequelize.literal("COALESCE(ROUND(AVG(Reviews.rate), 1), 0)"), "rating"],
       ],
       include: [
         {
@@ -407,8 +435,10 @@ exports.getSitterLists = async (req, res) => {
         },
       ],
       where: where,
-      group: ["Users.useridx", "Sitter.oneLineIntro"],
+      group: ["Users.useridx", "Sitter.oneLineIntro", "Sitter.pay", "Sitter.type"],
+      order: [["useridx", "ASC"]],
     });
+    console.log(data);
     res.status(200).json({ isSuccess: true, data: data });
   } catch (error) {
     console.log(error);
