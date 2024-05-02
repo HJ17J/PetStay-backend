@@ -285,13 +285,7 @@ exports.updatePw = async (req, res) => {
 // 펫시터 상세 정보 조회
 exports.getSitterInfo = async (req, res) => {
   try {
-    /* 필요한 정보 목록
-        Users + Sitters,
-        Reservations,
-        Reviews + Users
-     */
     // users, sitters join
-    // const { useridx: sitteridx } = req.params;
     const { useridx: sitteridx } = req.params;
     const [sData] = await model.Users.findAll({
       attributes: ["useridx", "userid", "name", "img", "usertype", "address"],
@@ -299,44 +293,54 @@ exports.getSitterInfo = async (req, res) => {
       include: [{ model: model.Sitters }],
     });
     // console.log("sData>>>>>>>>>>>>>>>", sData);
-    const { useridx, userid, name, img, usertype, address } = sData.dataValues;
-    const { type, license, career, oneLineIntro, selfIntroduction, pay, confirm } =
-      sData.dataValues.Sitter.dataValues;
+    const { useridx, userid, name, img, usertype: userType, address } = sData.dataValues;
+    const {
+      type: animalType,
+      license,
+      career,
+      oneLineIntro: shortIntro,
+      selfIntroduction,
+      pay,
+      confirm,
+    } = sData.dataValues.Sitter.dataValues;
+
+    // 평점 및 리뷰 개수 조회
+    const [{ reviewCount, rating }] = await model.Reviews.findAll({
+      attributes: [
+        [
+          sequelize.fn("COALESCE", sequelize.fn("COUNT", sequelize.col("reviewidx")), 0),
+          "reviewCount",
+        ],
+        [
+          sequelize.fn(
+            "COALESCE",
+            sequelize.fn("ROUND", sequelize.fn("AVG", sequelize.col("rate")), 1),
+            0
+          ),
+          "rating",
+        ],
+      ],
+      raw: true,
+      where: { sitteridx: sitteridx },
+    });
 
     const sitterInfo = {
       useridx,
       userid,
       name,
-      img,
-      usertype,
       address,
-      type,
+      img,
+      userType,
+      animalType,
       license,
       career,
-      oneLineIntro,
+      shortIntro,
       selfIntroduction,
       pay,
       confirm,
+      reviewCount,
+      rating,
     };
-
-    // 이번 달의 예약 정보만 가져오기 (추가 api 필요)
-    const curYear = new Date().getFullYear();
-    const curMonth = new Date().getMonth();
-    const reservations = await model.Reservations.findAll({
-      where: {
-        sitteridx: sitteridx,
-        createdAt: {
-          [Op.and]: {
-            [Op.gte]: new Date(curYear, curMonth, 1),
-            [Op.lt]: new Date(curYear, curMonth + 1, 1),
-          },
-        },
-      },
-    });
-    // 전체 예약 정보 가져오기
-    // const reservations = await model.Reservations.findAll({
-    //   where: { sitteridx: sitteridx },
-    // });
 
     // 리뷰 페이지네이션 추후 추가
     const rvData = await model.Reviews.findAll({
@@ -350,24 +354,6 @@ exports.getSitterInfo = async (req, res) => {
       order: [["createdAt", "DESC"]],
       where: { sitteridx: sitteridx },
     });
-    const rvNumberData = await model.Reviews.findAll({
-      attributes: [
-        [
-          sequelize.fn("COALESCE", sequelize.fn("COUNT", sequelize.col("reviewidx")), 0),
-          "reviewCount",
-        ],
-        [
-          sequelize.fn(
-            "COALESCE",
-            sequelize.fn("ROUND", sequelize.fn("AVG", sequelize.col("rate")), 1),
-            0
-          ),
-          "averageRating",
-        ],
-      ],
-      where: { sitteridx: sitteridx },
-    });
-    // console.log("review 숫자 데이터", rvNumberData);
 
     const reviews = rvData.map((el) => {
       const {
@@ -382,9 +368,7 @@ exports.getSitterInfo = async (req, res) => {
     res.status(200).json({
       isSuccess: true,
       sitterInfo: sitterInfo,
-      reservations: reservations,
       reviews: reviews,
-      rvNumberData: rvNumberData,
     });
   } catch (error) {
     console.log(error);

@@ -11,6 +11,8 @@ exports.getChats = async (req, res) => {
     //나와 대화상대 정보 검색
     const user1 = await model.Users.findOne({ where: { useridx } });
     const sitter1 = await model.Users.findOne({ where: { useridx: sitteridx } });
+    console.log("user1>>>>>>>>>>>>>>>", user1.dataValues.name);
+    console.log("sitter1>>>>>>>>>>>>>>>", sitter1);
     const user = {
       name: user1.dataValues.name,
       img: user1.dataValues.img,
