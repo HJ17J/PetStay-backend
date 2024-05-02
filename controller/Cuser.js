@@ -127,22 +127,14 @@ exports.postLogin = async (req, res) => {
     if (!match) {
       return res.status(401).json({ message: "비밀번호가 일치하지 않습니다." });
     }
-    // 세션 재생성을 위한 기존 세션 파괴
-    req.session.regenerate((err) => {
-      if (err) {
-        console.error(`세션 재생성 중 에러 발생 : ${err}`);
-        return res.status(500).send("세션 처리 중 오류가 발생했습니다.");
-      }
 
-      // 사용자 정보를 세션에 저장
-      req.session.user = {
-        id: user.useridx,
-        name: user.name,
-        usertype: user.usertype,
-      };
-      res.send({ msg: `환영합니다. ${user.name}님!`, statusCode: 200 });
-    });
-    console.log(req.session);
+    // 사용자 정보를 세션에 저장
+    req.session.user = {
+      id: user.useridx,
+      name: user.name,
+      usertype: user.usertype,
+    };
+    res.send({ msg: `환영합니다. ${user.name}님!`, statusCode: 200 });
   } catch (error) {
     console.error(`로그인 중 에러 발생 : ${error.message}`);
     res.status(500).send("로그인 중 오류가 발생했습니다.");
