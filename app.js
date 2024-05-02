@@ -3,6 +3,8 @@ const session = require("express-session");
 const { sequelize } = require("./models");
 const cors = require("cors");
 const app = express();
+const passport = require("passport"); // 수정된 경로
+
 // const dotenv = require("dotenv");
 // dotenv.config();
 const PORT = process.env.PORT;
@@ -21,20 +23,25 @@ app.use(cors());
 // --- session 미들웨어 설정 ---
 app.use(
   session({
-    secret: "sesac", // 수정
+    secret: process.env.GOOGLE_CLIENT_SECRET || "sesac", // 새싹 수정
     resave: false,
     saveUninitialized: true,
     cookie: {
-      maxAge: 3600000,
-      httpOnly: true,
+      maxAge: 36000000,
+      secure: false,
     },
   })
 );
 // --- session 미들웨어 설정 ---
 
+app.use(passport.initialize());
+app.use(passport.session());
+
 //routes
 const indexRouter = require("./routes");
+const authRouter = require("./routes/auth");
 app.use(serverPrefix, indexRouter);
+app.use("/auth", authRouter);
 
 //db
 sequelize
