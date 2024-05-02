@@ -81,5 +81,8 @@ router.get("/sitter/:useridx", Cuser.getSitterInfo);
 
 //chat관련 router
 router.get("/chat/:sitteridx", Cchat.getChats);
+router.get("/chatRoom/:roomidx", Cchat.getRoomChats);
+router.post("/insertChat", Cchat.postChat);
+router.post("/insertImg", uploadProfile.single("chatFile"), Cchat.postImg);
 
 module.exports = router;

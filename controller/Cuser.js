@@ -292,7 +292,7 @@ exports.getSitterInfo = async (req, res) => {
       where: { useridx: sitteridx },
       include: [{ model: model.Sitters }],
     });
-    console.log("sData>>>>>>>>>>>>>>>", sData);
+    // console.log("sData>>>>>>>>>>>>>>>", sData);
     const { useridx, userid, name, img, usertype: userType, address } = sData.dataValues;
     const {
       type: animalType,
@@ -414,7 +414,7 @@ exports.getSitterLists = async (req, res) => {
       group: ["Users.useridx", "Sitter.oneLineIntro", "Sitter.pay", "Sitter.type"],
       order: [["useridx", "ASC"]],
     });
-    console.log(data);
+    // console.log(data);
     res.status(200).json({ isSuccess: true, data: data });
   } catch (error) {
     console.log(error);
