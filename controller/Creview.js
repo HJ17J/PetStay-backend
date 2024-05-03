@@ -3,7 +3,11 @@ const model = require("../models");
 // 리뷰 등록
 exports.addReview = async (req, res) => {
   try {
-    const { useridx, sitteridx, content, rate } = req.body;
+    const useridx = req.session.user.id;
+    if (!useridx) {
+      res.status(200).send({ msg: "session이 만료되었습니다" });
+    }
+    const { sitteridx, content, rate } = req.body;
     const img = req.file?.location ? req.file.location : null;
 
     // 예약 확정 여부 조회
@@ -72,8 +76,12 @@ exports.deleteReview = async (req, res) => {
 // 리뷰 조회 (회원 마이페이지)
 exports.getUserReviews = async (req, res) => {
   try {
+    const useridx = req.session.user.id;
+    if (!useridx) {
+      res.status(200).send({ msg: "session이 만료되었습니다" });
+    }
     // 추후 페이지네이션 추가 필요
-    const result = await model.Reviews.findAll({ where: { useridx: req.params.useridx } });
+    const result = await model.Reviews.findAll({ where: { useridx } });
     const reviews = result.map((el) => el.dataValues);
     res.status(200).json({ isSuccess: true, data: reviews });
   } catch (error) {

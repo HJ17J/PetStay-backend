@@ -5,8 +5,10 @@ const model = require("../models");
 exports.getChats = async (req, res) => {
   try {
     const { sitteridx } = req.params; //sitteridx
-    // const useridx = req.session.user.id; //useridx
-    const useridx = 1; //useridx
+    const useridx = req.session.user.id;
+    if (!useridx) {
+      res.status(200).send({ msg: "session이 만료되었습니다" });
+    }
 
     //나와 대화상대 정보 검색
     const user1 = await model.Users.findOne({ where: { useridx } });
@@ -64,8 +66,10 @@ exports.getChats = async (req, res) => {
 exports.getRoomChats = async (req, res) => {
   try {
     const { roomidx } = req.params; //roomidx
-    // const useridx = req.session.user.id; //useridx
-    const useridx = 1; //useridx
+    const useridx = req.session.user.id;
+    if (!useridx) {
+      res.status(200).send({ msg: "session이 만료되었습니다" });
+    }
 
     // console.log("roomidx>>", roomidx);
     //있으면 채팅 내역 조회
@@ -103,8 +107,10 @@ exports.postChat = async (req, res) => {
   try {
     //필요데이터
     //roomidx, authoridx
-    // const useridx = req.session.user.id; //useridx
-    const useridx = 1; //useridx test용, 이후 session으로 변경
+    const useridx = req.session.user.id;
+    if (!useridx) {
+      res.status(200).send({ msg: "session이 만료되었습니다" });
+    }
     const { content, roomidx } = req.body;
     console.log(content, roomidx);
     const saveChat = await model.Chats.create({
@@ -121,8 +127,10 @@ exports.postChat = async (req, res) => {
 // 채팅 내역 저장 사진
 exports.postImg = async (req, res) => {
   try {
-    // const useridx = req.session.user.id; //useridx
-    const useridx = 1; //useridx test용, 이후 session으로 변경
+    const useridx = req.session.user.id;
+    if (!useridx) {
+      res.status(200).send({ msg: "session이 만료되었습니다" });
+    }
     const { img, roomidx } = req.body;
     console.log("roomidx>>", roomidx);
     console.log("img ", req.file.location);

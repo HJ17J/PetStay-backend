@@ -38,6 +38,17 @@ const uploadReview = multer({
   }),
 });
 
+const uploadChat = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: process.env.AWS_S3_BUCKET,
+    acl: "public-read",
+    key: (req, file, cb) => {
+      cb(null, "chat-img/" + Date.now().toString() + "-" + file.originalname);
+    },
+  }),
+});
+
 // controller
 const Cuser = require("../controller/Cuser");
 const Cchat = require("../controller/Cchat");
@@ -50,11 +61,11 @@ const Creview = require("../controller/Creview");
 router.post("/join", Cuser.postJoin);
 router.post("/idCheck", Cuser.idCheck);
 router.post("/nameCheck", Cuser.nameCheck);
-router.delete("/profile/:useridx", Cuser.deleteProfile);
+router.delete("/profile", Cuser.deleteProfile);
 //회원정보 조회
-router.post("/profile/:useridx", Cuser.postProfile);
-router.patch("/profile/:useridx", uploadProfile.single("profileImage"), Cuser.updateProfile);
-router.patch("/profile/pwUpdate/:useridx", Cuser.updatePw);
+router.post("/profile", Cuser.postProfile);
+router.patch("/profile", uploadProfile.single("profileImage"), Cuser.updateProfile);
+router.patch("/profile/pwUpdate", Cuser.updatePw);
 //로그인, 로그아웃 - 형석
 router.post("/login", Cuser.postLogin);
 router.post("/logout", Cuser.postLogout);
@@ -72,17 +83,17 @@ router.post("/review/:resvidx", uploadReview.single("reviewImage"), Creview.addR
 // 리뷰 삭제
 router.delete("/review/:reviewidx", Creview.deleteReview);
 // 리뷰 조회 (회원 마이페이지)
-router.get("/review/:useridx", Creview.getUserReviews);
+router.get("/review", Creview.getUserReviews);
 
 // 시터 목록 조회 + 검색
 router.get("/sitter", Cuser.getSitterLists);
 // 시터 상세 정보
-router.get("/sitter/:useridx", Cuser.getSitterInfo);
+router.get("/sitter/:sitteridx", Cuser.getSitterInfo);
 
 //chat관련 router
 router.get("/chat/:sitteridx", Cchat.getChats);
 router.get("/chatRoom/:roomidx", Cchat.getRoomChats);
 router.post("/insertChat", Cchat.postChat);
-router.post("/insertImg", uploadProfile.single("chatFile"), Cchat.postImg);
+router.post("/insertImg", uploadChat.single("chatFile"), Cchat.postImg);
 
 module.exports = router;
