@@ -1,4 +1,4 @@
-const { where } = require("sequelize");
+const { where, Op } = require("sequelize");
 const model = require("../models");
 
 // 문의하기 클릭 - 생성 or 기존 내역
@@ -148,3 +148,47 @@ exports.postImg = async (req, res) => {
 };
 
 // room목록 - mount시(개인 프로필 페이지)
+exports.getChatsOne = async (req, res) => {
+  try {
+    const idx = req.session.user.id;
+    if (!idx) {
+      res.status(200).send({ msg: "session이 만료되었습니다" });
+    }
+    const user = await model.Users.findOne({ where: { useridx: idx } });
+    console.log("user의 타입 검사>>", user.dataValues.usertype);
+
+    if (user.dataValues.usertype === "user") {
+      //user일 때
+      const rooms = await model.Rooms.findAll({
+        where: { useridx: idx },
+        include: {
+          model: model.Users,
+          where: { useridx: model.Sequelize.col("Rooms.sitteridx") },
+          attributes: ["name", "img"],
+        },
+      });
+      // console.log("name포함 room목록>>", rooms[0].dataValues.User);
+      res.status(200).send({ msg: "getUsers", rooms, user });
+    } else {
+      console.log("type>>>", user.dataValues.usertype);
+      //sitter일 때
+      const roomR = await model.Rooms.findAll({
+        where: { sitteridx: idx },
+      });
+      console.log("roomRRRRr", roomR);
+      const rooms = await model.Rooms.findAll({
+        where: { sitteridx: idx },
+        include: {
+          model: model.Users,
+          on: { "$User.useridx$": { [Op.eq]: model.sequelize.col("Rooms.useridx") } },
+          attributes: ["name", "img"],
+        },
+      });
+      // console.log("name포함 room목록>>", rooms[0].dataValues);
+      res.status(200).send({ msg: "getSitters", rooms, user });
+    }
+  } catch (err) {
+    console.log("err", err);
+    res.status(500).send("server err발생!!");
+  }
+};

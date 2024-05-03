@@ -95,5 +95,6 @@ router.get("/chat/:sitteridx", Cchat.getChats);
 router.get("/chatRoom/:roomidx", Cchat.getRoomChats);
 router.post("/insertChat", Cchat.postChat);
 router.post("/insertImg", uploadChat.single("chatFile"), Cchat.postImg);
+router.get("/Onechat", Cchat.getChatsOne);
 
 module.exports = router;
