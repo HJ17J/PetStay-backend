@@ -197,16 +197,32 @@ exports.postProfile = async (req, res) => {
     //type별 data전송
     if (userData.usertype === "user") {
       const resvData = await model.Reservations.findAll({
+        include: [
+          {
+            model: model.Users,
+            on: { "$User.useridx$": { [Op.eq]: sequelize.col("Reservations.sitteridx") } },
+            attributes: ["useridx", "name"],
+          },
+        ],
         where: { useridx },
       });
+      // console.log("resvData>>>>", resvData);
       res.status(200).send({ userData, resvData });
     } else if (userData.usertype === "sitter") {
       const sitterData = await model.Sitters.findOne({
         where: { useridx },
       });
       const resvData = await model.Reservations.findAll({
+        include: [
+          {
+            model: model.Users,
+            on: { "$User.useridx$": { [Op.eq]: sequelize.col("Reservations.useridx") } },
+            attributes: ["useridx", "name"],
+          },
+        ],
         where: { sitteridx: useridx },
       });
+      console.log("resvData>>>>", resvData);
       res.status(200).send({ userData, sitterData, resvData });
     }
   } catch (err) {
