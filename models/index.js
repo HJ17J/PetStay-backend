@@ -41,6 +41,9 @@ Users.hasMany(Rooms, { foreignKey: "useridx" });
 Rooms.belongsTo(Users, { foreignKey: "sitteridx" });
 Users.hasMany(Rooms, { foreignKey: "sitteridx" });
 
+Rooms.hasMany(Chats, { foreignKey: "roomidx" });
+Chats.belongsTo(Rooms, { foreignKey: "roomidx" });
+
 Users.hasMany(Chats, { foreignKey: "authoridx" });
 Chats.belongsTo(Users, { foreignKey: "authoridx" });
 

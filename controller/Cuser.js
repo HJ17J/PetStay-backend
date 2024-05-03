@@ -418,7 +418,7 @@ exports.getSitterLists = async (req, res) => {
       group: ["Users.useridx", "Sitter.oneLineIntro", "Sitter.pay", "Sitter.type"],
       order: [["useridx", "ASC"]],
     });
-    console.log(data);
+    // console.log(data);
     res.status(200).json({ isSuccess: true, data: data });
   } catch (error) {
     console.log(error);
