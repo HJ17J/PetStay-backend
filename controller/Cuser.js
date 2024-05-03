@@ -292,8 +292,14 @@ exports.getSitterInfo = async (req, res) => {
       where: { useridx: sitteridx },
       include: [{ model: model.Sitters }],
     });
-    // console.log("sData>>>>>>>>>>>>>>>", sData);
-    const { useridx, userid, name, img, usertype: userType, address } = sData.dataValues;
+
+    // 일반 회원이나 없는 회원번호로 요청 시
+    if (!sData || sData.dataValues.usertype === "user") {
+      return res.status(404).json({ msg: "잘못된 URL입니다." });
+    }
+    console.log("sData>>>>>>>>>>>>>>>", sData);
+
+    const { useridx, userid, name, img, usertype, address } = sData.dataValues;
     const {
       type: animalType,
       license,
@@ -301,7 +307,6 @@ exports.getSitterInfo = async (req, res) => {
       oneLineIntro: shortIntro,
       selfIntroduction,
       pay,
-      confirm,
     } = sData.dataValues.Sitter.dataValues;
 
     // 평점 및 리뷰 개수 조회
@@ -326,18 +331,17 @@ exports.getSitterInfo = async (req, res) => {
 
     const sitterInfo = {
       useridx,
-      userid,
+      // userid,
       name,
       address,
       img,
-      userType,
+      // usertype,
       animalType,
       license,
       career,
       shortIntro,
       selfIntroduction,
       pay,
-      confirm,
       reviewCount,
       rating,
     };

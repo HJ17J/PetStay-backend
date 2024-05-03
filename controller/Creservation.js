@@ -39,41 +39,46 @@ runAtMidnight();
 
 exports.insertResv = async (req, res) => {
   try {
-    const { sitteridx } = req.params; //sitteridx
-    // const useridx = req.session.user.id; //useridx
+    const { sitteridx } = req.params;
+    const useridx = 2; //useridx test용
+    const { content, date, startTime, endTime, type, animalNumber } = req.body;
+
+    let sTime = Number(startTime.replace(":00", ""));
+    let eTime = Number(endTime.replace(":00", ""));
+
+    // 유저 세션
+    // const useridx = req.session.user.id;
     console.log("useridx>>", req.session);
     console.log("user>>", req.session.user);
-    // const useridx = 2; //useridx test용
-    const { content, date, startTime, endTime, type, animalNumber } = req.body.data;
 
     // if (!useridx) {
     //   res.status(200).send({ msg: "session이 만료되었습니다" });
     // }
 
-    //시급 계산
-    const sitterPay = await model.Sitters.findOne({
+    // 시급 계산
+    const { pay: sitterPay } = await model.Sitters.findOne({
       attributes: ["pay"],
       where: { useridx: sitteridx },
+      raw: true,
     });
-    const time = endTime - startTime;
-    const totalPrice = parseInt(sitterPay.dataValues.pay) * Number(time) * Number(animalNumber);
-    // console.log("총금액>>", totalPrice);
+    const time = eTime - sTime + 1;
+    const totalPrice = sitterPay * time * animalNumber;
+    console.log("총금액 >>", totalPrice);
 
-    //예약입력
+    // 예약 등록
     const resvData = await model.Reservations.create({
       content,
       date,
       price: totalPrice,
       useridx,
       sitteridx,
-      startTime,
-      endTime,
+      startTime: sTime,
+      endTime: eTime,
       type,
       animalNumber,
     });
 
-    // res.status(200).send({ resvData });
-    res.status(200).send({ msg: "예약요청이 완료되었습니다" });
+    res.status(200).json({ isSuccess: true });
   } catch (err) {
     console.log("err", err);
     res.status(500).send("server err발생!!");
