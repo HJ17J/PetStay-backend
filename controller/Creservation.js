@@ -42,12 +42,9 @@ exports.insertResv = async (req, res) => {
     const { sitteridx } = req.params;
     const useridx = req.session.user.id;
     if (!useridx) {
-      res.status(200).send({ msg: "session이 만료되었습니다" });
+      res.status(401).send({ msg: "session이 만료되었습니다" });
     }
     const { content, date, startTime, endTime, type, animalNumber } = req.body;
-
-    let sTime = Number(startTime.replace(":00", ""));
-    let eTime = Number(endTime.replace(":00", ""));
 
     // 시급 계산
     const { pay: sitterPay } = await model.Sitters.findOne({
@@ -55,7 +52,8 @@ exports.insertResv = async (req, res) => {
       where: { useridx: sitteridx },
       raw: true,
     });
-    const time = eTime - sTime + 1;
+    const time = endTime - startTime;
+    console.log(startTime, endTime);
     const totalPrice = sitterPay * time * animalNumber;
     console.log("총금액 >>", totalPrice);
 
@@ -66,12 +64,11 @@ exports.insertResv = async (req, res) => {
       price: totalPrice,
       useridx,
       sitteridx,
-      startTime: sTime,
-      endTime: eTime,
+      startTime,
+      endTime,
       type,
       animalNumber,
     });
-
     res.status(200).json({ isSuccess: true });
   } catch (err) {
     console.log("err", err);
