@@ -35,7 +35,8 @@ exports.postJoin = async (req, res) => {
         message: userExists.userid === userid ? "중복된 아이디입니다." : "중복된 닉네임입니다.",
       });
     }
-    const defaultImgURL = "/static/joinImg.png"; // 이미지 경로 수정
+    const defaultImgURL =
+      "https://bucket-hyeon.s3.ap-northeast-2.amazonaws.com/profile-img/default-profile.jpg"; // 이미지 경로 수정
     const hashedPassword = await bcrypt.hash(userpw, salt);
     const newUser = await model.Users.create(
       {
@@ -153,7 +154,10 @@ exports.postLogout = (req, res) => {
 
 //회원 탈퇴
 exports.deleteProfile = async (req, res) => {
-  const { useridx } = req.params; // URL 파라미터에서 useridx 추출
+  const useridx = req.session.user.id;
+  if (!useridx) {
+    res.status(200).send({ msg: "session이 만료되었습니다" });
+  }
   const { userpw } = req.body; // 요청 본문에서 비밀번호 추출
   try {
     // 사용자 조회
@@ -183,24 +187,42 @@ exports.deleteProfile = async (req, res) => {
 
 exports.postProfile = async (req, res) => {
   try {
-    console.log("id>>>>>>>>>>>>>>>>", req.session.user.id);
-    const { useridx } = req.params;
+    const useridx = req.session.user.id;
+    if (!useridx) {
+      res.status(200).send({ msg: "session이 만료되었습니다" });
+    }
     const userData = await model.Users.findOne({
       where: { useridx },
     });
     //type별 data전송
     if (userData.usertype === "user") {
       const resvData = await model.Reservations.findAll({
+        include: [
+          {
+            model: model.Users,
+            on: { "$User.useridx$": { [Op.eq]: sequelize.col("Reservations.sitteridx") } },
+            attributes: ["useridx", "name"],
+          },
+        ],
         where: { useridx },
       });
+      // console.log("resvData>>>>", resvData);
       res.status(200).send({ userData, resvData });
     } else if (userData.usertype === "sitter") {
       const sitterData = await model.Sitters.findOne({
         where: { useridx },
       });
       const resvData = await model.Reservations.findAll({
+        include: [
+          {
+            model: model.Users,
+            on: { "$User.useridx$": { [Op.eq]: sequelize.col("Reservations.useridx") } },
+            attributes: ["useridx", "name"],
+          },
+        ],
         where: { sitteridx: useridx },
       });
+      console.log("resvData>>>>", resvData);
       res.status(200).send({ userData, sitterData, resvData });
     }
   } catch (err) {
@@ -211,7 +233,10 @@ exports.postProfile = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
   try {
-    const { useridx } = req.params;
+    const useridx = req.session.user.id;
+    if (!useridx) {
+      res.status(200).send({ msg: "session이 만료되었습니다" });
+    }
     const userData = await model.Users.findOne({ where: { useridx } });
     const { userid, name, address, type, license, career, oneLineIntro, selfIntroduction, pay } =
       req.body;
@@ -258,7 +283,10 @@ exports.updateProfile = async (req, res) => {
 
 exports.updatePw = async (req, res) => {
   try {
-    const { useridx } = req.params;
+    const useridx = req.session.user.id;
+    if (!useridx) {
+      res.status(200).send({ msg: "session이 만료되었습니다" });
+    }
     const { userpw, newpw } = req.body;
 
     //현재 비밀번호 검증
@@ -286,7 +314,7 @@ exports.updatePw = async (req, res) => {
 exports.getSitterInfo = async (req, res) => {
   try {
     // users, sitters join
-    const { useridx: sitteridx } = req.params;
+    const { sitteridx } = req.params;
     const [sData] = await model.Users.findAll({
       attributes: ["useridx", "userid", "name", "img", "usertype", "address"],
       where: { useridx: sitteridx },
@@ -383,6 +411,7 @@ exports.getSitterInfo = async (req, res) => {
 // 펫시터 목록 조회 (+쿼리스트링 검색)
 exports.getSitterLists = async (req, res) => {
   try {
+    console.log("session을 보여줘!!!", req.session);
     let where = { usertype: "sitter" };
     if (Object.keys(req.query).length) {
       const [option] = Object.keys(req.query);
