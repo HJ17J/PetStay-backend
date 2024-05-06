@@ -236,12 +236,24 @@ exports.postProfile = async (req, res) => {
 exports.updateProfile = async (req, res) => {
   try {
     const useridx = req.session.user.id;
+    console.log("useridx는>>", useridx);
     if (!useridx) {
       res.status(200).send({ msg: "session이 만료되었습니다" });
     }
     const userData = await model.Users.findOne({ where: { useridx } });
-    const { userid, name, address, type, license, career, oneLineIntro, selfIntroduction, pay } =
-      req.body;
+    console.log("body로 오는중!!!", req.body);
+    const {
+      userid,
+      name,
+      address,
+      type,
+      license,
+      career,
+      oneLineIntro,
+      selfIntroduction,
+      pay,
+      img,
+    } = req.body;
 
     let updateFields = {
       userid,
@@ -251,6 +263,7 @@ exports.updateProfile = async (req, res) => {
 
     // req.file이 존재하는 경우에만 img 필드 업데이트
     if (req.file) {
+      console.log("file이 오고있습니다....", req.file);
       updateFields.img = req.file.location;
     }
 
@@ -260,7 +273,8 @@ exports.updateProfile = async (req, res) => {
 
     // type에 따라 수정작업
     if (userData.usertype === "sitter") {
-      await model.Users.update(
+      console.log("sitter입니다");
+      await model.Sitters.update(
         {
           type,
           license,
