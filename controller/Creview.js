@@ -1,4 +1,6 @@
 const model = require("../models");
+const { sequelize } = require("../models");
+const { Op } = require("sequelize");
 
 // 리뷰 등록
 exports.addReview = async (req, res) => {
@@ -87,5 +89,85 @@ exports.getUserReviews = async (req, res) => {
     res.status(200).json({ isSuccess: true, data: reviews });
   } catch (error) {
     res.status(500).json({ isSuccess: false, msg: "리뷰 조회 실패" });
+  }
+};
+
+// 리뷰 조회 (펫시터 상세페이지)
+exports.getSitterReviews = async (req, res) => {
+  try {
+    const { sitteridx } = req.params;
+    // 평점 및 리뷰 개수 조회
+    const [{ reviewCount, rating }] = await model.Reviews.findAll({
+      attributes: [
+        [
+          sequelize.fn("COALESCE", sequelize.fn("COUNT", sequelize.col("reviewidx")), 0),
+          "reviewCount",
+        ],
+        [
+          sequelize.fn(
+            "COALESCE",
+            sequelize.fn("ROUND", sequelize.fn("AVG", sequelize.col("rate")), 1),
+            0
+          ),
+          "rating",
+        ],
+      ],
+      raw: true,
+      where: { sitteridx: sitteridx },
+    });
+
+    // 리뷰 페이지네이션 추후 추가
+    const limit = 3;
+    const totalReviews = reviewCount;
+    const totalPage = Math.ceil(totalReviews / limit);
+
+    let offset;
+    const currentPage = Number(req.query.rvPage);
+    console.log(currentPage);
+
+    if (currentPage === 0) {
+      offset = 0;
+    } else {
+      offset = (currentPage - 1) * limit;
+    }
+    console.log("offset", offset);
+
+    let startPage = Math.floor((currentPage - 1 / limit) * limit);
+    let endPage = startPage + limit - 1;
+
+    if (endPage > totalPage) {
+      endPage = totalPage;
+    } else if (startPage < 0) {
+      startPage = 1;
+    }
+
+    const rvData = await model.Reviews.findAll({
+      limit: limit,
+      offset: offset,
+      include: [
+        {
+          model: model.Users,
+          on: { "$User.useridx$": { [Op.eq]: sequelize.col("Reviews.useridx") } },
+          attributes: ["useridx", "name", "img"],
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+      where: { sitteridx: sitteridx },
+    });
+
+    console.log("리뷰데이터", rvData);
+    const reviews = rvData.map((el) => {
+      const {
+        User: { name, img },
+      } = el.dataValues;
+      el.dataValues.name = name;
+      el.dataValues.profileImg = img;
+      delete el.dataValues.User;
+      return el.dataValues;
+    });
+    res.status(200).json({ reviews: reviews });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ msg: "리뷰 조회 실패" });
   }
 };

@@ -338,26 +338,6 @@ exports.getSitterInfo = async (req, res) => {
       pay,
     } = sData.dataValues.Sitter.dataValues;
 
-    // 평점 및 리뷰 개수 조회
-    const [{ reviewCount, rating }] = await model.Reviews.findAll({
-      attributes: [
-        [
-          sequelize.fn("COALESCE", sequelize.fn("COUNT", sequelize.col("reviewidx")), 0),
-          "reviewCount",
-        ],
-        [
-          sequelize.fn(
-            "COALESCE",
-            sequelize.fn("ROUND", sequelize.fn("AVG", sequelize.col("rate")), 1),
-            0
-          ),
-          "rating",
-        ],
-      ],
-      raw: true,
-      where: { sitteridx: sitteridx },
-    });
-
     const sitterInfo = {
       useridx,
       // userid,
@@ -371,37 +351,11 @@ exports.getSitterInfo = async (req, res) => {
       shortIntro,
       selfIntroduction,
       pay,
-      reviewCount,
-      rating,
     };
-
-    // 리뷰 페이지네이션 추후 추가
-    const rvData = await model.Reviews.findAll({
-      include: [
-        {
-          model: model.Users,
-          on: { "$User.useridx$": { [Op.eq]: sequelize.col("Reviews.useridx") } },
-          attributes: ["useridx", "name", "img"],
-        },
-      ],
-      order: [["createdAt", "DESC"]],
-      where: { sitteridx: sitteridx },
-    });
-
-    const reviews = rvData.map((el) => {
-      const {
-        User: { name, img },
-      } = el.dataValues;
-      el.dataValues.name = name;
-      el.dataValues.img = img;
-      delete el.dataValues.User;
-      return el.dataValues;
-    });
 
     res.status(200).json({
       isSuccess: true,
       sitterInfo: sitterInfo,
-      reviews: reviews,
     });
   } catch (error) {
     console.log(error);
