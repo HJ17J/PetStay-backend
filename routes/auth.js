@@ -7,7 +7,7 @@ router.get("/kakao", passport.authenticate("kakao"));
 
 // kakao 로그인 콜백 라우트
 router.get(
-  "kakao/callback",
+  "/kakao/callback",
   passport.authenticate("kakao", { failureRedirect: "/login" }),
   function (req, res) {
     res.json({

@@ -14,7 +14,7 @@ const Users = function (Sequelize, DataTypes) {
       },
       userpw: {
         type: DataTypes.TEXT,
-        allowNull: false,
+        allowNull: true,
       },
       name: {
         type: DataTypes.STRING(20),

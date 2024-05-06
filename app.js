@@ -1,9 +1,14 @@
+require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const { sequelize } = require("./models");
 const cors = require("cors");
 const app = express();
-const passport = require("passport"); // 수정된 경로
+const passport = require("passport");
+//routes
+const indexRouter = require("./routes");
+const authRouter = require("./routes/auth");
+require("./config/passport");
 
 // const dotenv = require("dotenv");
 // dotenv.config();
@@ -36,12 +41,8 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-//routes
-const indexRouter = require("./routes");
-const authRouter = require("./routes/auth");
-app.use(serverPrefix, indexRouter);
 app.use("/auth", authRouter);
+app.use(serverPrefix, indexRouter);
 
 //db
 sequelize

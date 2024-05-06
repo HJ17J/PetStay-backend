@@ -1,7 +1,8 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const KakaoStrategy = require("passport").Strategy;
-const Users = require("../models/Users").Users;
+const KakaoStrategy = require("passport-kakao").Strategy;
+const db = require("../models");
+const Users = db.Users;
 const PORT = process.env.PORT;
 const axios = require("axios");
 

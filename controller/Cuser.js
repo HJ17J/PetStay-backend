@@ -128,7 +128,6 @@ exports.postLogin = async (req, res) => {
     if (!match) {
       return res.status(401).json({ message: "비밀번호가 일치하지 않습니다." });
     }
-
     // 사용자 정보를 세션에 저장
     req.session.user = {
       id: user.useridx,
@@ -154,10 +153,7 @@ exports.postLogout = (req, res) => {
 
 //회원 탈퇴
 exports.deleteProfile = async (req, res) => {
-  const useridx = req.session.user.id;
-  if (!useridx) {
-    res.status(200).send({ msg: "session이 만료되었습니다" });
-  }
+exports.deleteProfile = async (req, res) => {
   const { userpw } = req.body; // 요청 본문에서 비밀번호 추출
   try {
     // 사용자 조회
@@ -187,42 +183,24 @@ exports.deleteProfile = async (req, res) => {
 
 exports.postProfile = async (req, res) => {
   try {
-    const useridx = req.session.user.id;
-    if (!useridx) {
-      res.status(200).send({ msg: "session이 만료되었습니다" });
-    }
+  try {
+    console.log("id>>>>>>>>>>>>>>>>", req.session.user.id);
     const userData = await model.Users.findOne({
       where: { useridx },
     });
     //type별 data전송
     if (userData.usertype === "user") {
       const resvData = await model.Reservations.findAll({
-        include: [
-          {
-            model: model.Users,
-            on: { "$User.useridx$": { [Op.eq]: sequelize.col("Reservations.sitteridx") } },
-            attributes: ["useridx", "name"],
-          },
-        ],
         where: { useridx },
       });
-      // console.log("resvData>>>>", resvData);
       res.status(200).send({ userData, resvData });
     } else if (userData.usertype === "sitter") {
       const sitterData = await model.Sitters.findOne({
         where: { useridx },
       });
       const resvData = await model.Reservations.findAll({
-        include: [
-          {
-            model: model.Users,
-            on: { "$User.useridx$": { [Op.eq]: sequelize.col("Reservations.useridx") } },
-            attributes: ["useridx", "name"],
-          },
-        ],
         where: { sitteridx: useridx },
       });
-      console.log("resvData>>>>", resvData);
       res.status(200).send({ userData, sitterData, resvData });
     }
   } catch (err) {
@@ -233,10 +211,7 @@ exports.postProfile = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
   try {
-    const useridx = req.session.user.id;
-    if (!useridx) {
-      res.status(200).send({ msg: "session이 만료되었습니다" });
-    }
+  try {
     const userData = await model.Users.findOne({ where: { useridx } });
     const { userid, name, address, type, license, career, oneLineIntro, selfIntroduction, pay } =
       req.body;
@@ -283,10 +258,7 @@ exports.updateProfile = async (req, res) => {
 
 exports.updatePw = async (req, res) => {
   try {
-    const useridx = req.session.user.id;
-    if (!useridx) {
-      res.status(200).send({ msg: "session이 만료되었습니다" });
-    }
+  try {
     const { userpw, newpw } = req.body;
 
     //현재 비밀번호 검증
@@ -313,32 +285,73 @@ exports.updatePw = async (req, res) => {
 // 펫시터 상세 정보 조회
 exports.getSitterInfo = async (req, res) => {
   try {
+  try {
+    /* 필요한 정보 목록
+        Users + Sitters,
+        Reservations,
+        Reviews + Users
     // users, sitters join
-    const { sitteridx } = req.params;
+    // users, sitters join
+    // const { useridx: sitteridx } = req.params;
     const [sData] = await model.Users.findAll({
       attributes: ["useridx", "userid", "name", "img", "usertype", "address"],
       where: { useridx: sitteridx },
       include: [{ model: model.Sitters }],
     });
-
-    // 일반 회원이나 없는 회원번호로 요청 시
-    if (!sData || sData.dataValues.usertype === "user") {
-      return res.status(404).json({ msg: "잘못된 URL입니다." });
-    }
     console.log("sData>>>>>>>>>>>>>>>", sData);
-
     const { useridx, userid, name, img, usertype, address } = sData.dataValues;
-    const {
-      type: animalType,
+    const { useridx, userid, name, img, usertype, address } = sData.dataValues;
+    const { type, license, career, oneLineIntro, selfIntroduction, pay, confirm } =
+
+    const sitterInfo = {
+      useridx,
+      useridx,
+      name,
+      name,
+      img,
+      address,
+      address,
       license,
       career,
-      oneLineIntro: shortIntro,
+      career,
       selfIntroduction,
       pay,
-    } = sData.dataValues.Sitter.dataValues;
+      pay,
+    };
 
-    // 평점 및 리뷰 개수 조회
-    const [{ reviewCount, rating }] = await model.Reviews.findAll({
+
+    // 이번 달의 예약 정보만 가져오기 (추가 api 필요)
+    const curYear = new Date().getFullYear();
+    const curMonth = new Date().getMonth();
+    const reservations = await model.Reservations.findAll({
+      where: {
+        sitteridx: sitteridx,
+        createdAt: {
+          [Op.and]: {
+            [Op.gte]: new Date(curYear, curMonth, 1),
+            [Op.lt]: new Date(curYear, curMonth + 1, 1),
+          },
+        },
+      },
+    });
+    // 전체 예약 정보 가져오기
+    // const reservations = await model.Reservations.findAll({
+    //   where: { sitteridx: sitteridx },
+    // });
+    // 리뷰 페이지네이션 추후 추가
+    const rvData = await model.Reviews.findAll({
+      include: [
+        {
+          model: model.Users,
+          on: { "$User.useridx$": { [Op.eq]: sequelize.col("Reviews.useridx") } },
+          attributes: ["useridx", "name", "img"],
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+      where: { sitteridx: sitteridx },
+    });
+    });
+    const rvNumberData = await model.Reviews.findAll({
       attributes: [
         [
           sequelize.fn("COALESCE", sequelize.fn("COUNT", sequelize.col("reviewidx")), 0),
@@ -350,40 +363,9 @@ exports.getSitterInfo = async (req, res) => {
             sequelize.fn("ROUND", sequelize.fn("AVG", sequelize.col("rate")), 1),
             0
           ),
-          "rating",
+          "averageRating",
         ],
       ],
-      raw: true,
-      where: { sitteridx: sitteridx },
-    });
-
-    const sitterInfo = {
-      useridx,
-      // userid,
-      name,
-      address,
-      img,
-      // usertype,
-      animalType,
-      license,
-      career,
-      shortIntro,
-      selfIntroduction,
-      pay,
-      reviewCount,
-      rating,
-    };
-
-    // 리뷰 페이지네이션 추후 추가
-    const rvData = await model.Reviews.findAll({
-      include: [
-        {
-          model: model.Users,
-          on: { "$User.useridx$": { [Op.eq]: sequelize.col("Reviews.useridx") } },
-          attributes: ["useridx", "name", "img"],
-        },
-      ],
-      order: [["createdAt", "DESC"]],
       where: { sitteridx: sitteridx },
     });
 
@@ -400,6 +382,8 @@ exports.getSitterInfo = async (req, res) => {
     res.status(200).json({
       isSuccess: true,
       sitterInfo: sitterInfo,
+      sitterInfo: sitterInfo,
+      reviews: reviews,
       reviews: reviews,
     });
   } catch (error) {
@@ -411,7 +395,6 @@ exports.getSitterInfo = async (req, res) => {
 // 펫시터 목록 조회 (+쿼리스트링 검색)
 exports.getSitterLists = async (req, res) => {
   try {
-    console.log("session을 보여줘!!!", req.session);
     let where = { usertype: "sitter" };
     if (Object.keys(req.query).length) {
       const [option] = Object.keys(req.query);
@@ -447,7 +430,7 @@ exports.getSitterLists = async (req, res) => {
       group: ["Users.useridx", "Sitter.oneLineIntro", "Sitter.pay", "Sitter.type"],
       order: [["useridx", "ASC"]],
     });
-    // console.log(data);
+    });
     res.status(200).json({ isSuccess: true, data: data });
   } catch (error) {
     console.log(error);
