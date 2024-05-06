@@ -64,7 +64,7 @@ router.post("/nameCheck", Cuser.nameCheck);
 router.delete("/profile", Cuser.deleteProfile);
 //회원정보 조회
 router.post("/profile", Cuser.postProfile);
-router.patch("/profile", uploadProfile.single("profileImage"), Cuser.updateProfile);
+router.post("/profileUpdate", uploadProfile.single("profileImage"), Cuser.updateProfile);
 router.patch("/profile/pwUpdate", Cuser.updatePw);
 //로그인, 로그아웃 - 형석
 router.post("/login", Cuser.postLogin);
