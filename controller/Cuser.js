@@ -135,6 +135,7 @@ exports.postLogin = async (req, res) => {
       name: user.name,
       usertype: user.usertype,
     };
+    console.log("session--->>>", req.session);
     res.send({ msg: `환영합니다. ${user.name}님!`, statusCode: 200 });
   } catch (error) {
     console.error(`로그인 중 에러 발생 : ${error.message}`);

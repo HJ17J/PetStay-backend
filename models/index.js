@@ -12,7 +12,7 @@ if (process.env.NODE_ENV) {
 
 const sequelize = new Sequelize(config.database, config.username, config.password, config);
 
-const Users = require("./Users")(sequelize, Sequelize);
+const Users = require("./Users")(sequelize, Sequelize.DataTypes);
 const Chats = require("./Chats")(sequelize, Sequelize);
 const Reservations = require("./Reservations")(sequelize, Sequelize);
 const Reviews = require("./Reviews")(sequelize, Sequelize);
