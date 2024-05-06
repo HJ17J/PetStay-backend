@@ -187,6 +187,7 @@ exports.deleteProfile = async (req, res) => {
 
 exports.postProfile = async (req, res) => {
   try {
+    console.log(req.session.user.id);
     const useridx = req.session.user.id;
     if (!useridx) {
       res.status(200).send({ msg: "session이 만료되었습니다" });
