@@ -45,7 +45,7 @@ app.use("/auth", authRouter);
 
 //db
 sequelize
-  .sync({ force: false })
+  .sync({ force: true })
   .then(() => {
     server.listen(PORT, () => {
       console.log(`http://localhost:${PORT}`);
