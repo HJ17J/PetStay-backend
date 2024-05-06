@@ -387,12 +387,13 @@ exports.getSitterInfo = async (req, res) => {
       where: { sitteridx: sitteridx },
     });
 
+    console.log("리뷰데이터", rvData);
     const reviews = rvData.map((el) => {
       const {
         User: { name, img },
       } = el.dataValues;
       el.dataValues.name = name;
-      el.dataValues.img = img;
+      el.dataValues.profileImg = img;
       delete el.dataValues.User;
       return el.dataValues;
     });
