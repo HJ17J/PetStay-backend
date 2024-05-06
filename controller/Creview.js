@@ -97,7 +97,7 @@ exports.getSitterReviews = async (req, res) => {
   try {
     const { sitteridx } = req.params;
     // 평점 및 리뷰 개수 조회
-    const [{ reviewCount, rating }] = await model.Reviews.findAll({
+    const [{ reviewCount }] = await model.Reviews.findAll({
       attributes: [
         [
           sequelize.fn("COALESCE", sequelize.fn("COUNT", sequelize.col("reviewidx")), 0),
@@ -116,21 +116,19 @@ exports.getSitterReviews = async (req, res) => {
       where: { sitteridx: sitteridx },
     });
 
-    // 리뷰 페이지네이션 추후 추가
-    const limit = 3;
+    // 리뷰 페이지네이션 추가
+    const limit = 2;
     const totalReviews = reviewCount;
     const totalPage = Math.ceil(totalReviews / limit);
 
     let offset;
     const currentPage = Number(req.query.rvPage);
-    console.log(currentPage);
 
     if (currentPage === 0) {
       offset = 0;
     } else {
       offset = (currentPage - 1) * limit;
     }
-    console.log("offset", offset);
 
     let startPage = Math.floor((currentPage - 1 / limit) * limit);
     let endPage = startPage + limit - 1;
@@ -155,7 +153,6 @@ exports.getSitterReviews = async (req, res) => {
       where: { sitteridx: sitteridx },
     });
 
-    console.log("리뷰데이터", rvData);
     const reviews = rvData.map((el) => {
       const {
         User: { name, img },
@@ -165,7 +162,7 @@ exports.getSitterReviews = async (req, res) => {
       delete el.dataValues.User;
       return el.dataValues;
     });
-    res.status(200).json({ reviews: reviews });
+    res.status(200).json({ reviews: reviews, totalPage });
   } catch (error) {
     console.log(error);
     res.status(500).json({ msg: "리뷰 조회 실패" });

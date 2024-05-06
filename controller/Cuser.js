@@ -314,8 +314,9 @@ exports.updatePw = async (req, res) => {
 // 펫시터 상세 정보 조회
 exports.getSitterInfo = async (req, res) => {
   try {
-    // users, sitters join
     const { sitteridx } = req.params;
+
+    // 펫시터 정보 조회
     const [sData] = await model.Users.findAll({
       attributes: ["useridx", "userid", "name", "img", "usertype", "address"],
       where: { useridx: sitteridx },
@@ -326,7 +327,26 @@ exports.getSitterInfo = async (req, res) => {
     if (!sData || sData.dataValues.usertype === "user") {
       return res.status(404).json({ msg: "잘못된 URL입니다." });
     }
-    console.log("sData>>>>>>>>>>>>>>>", sData);
+
+    // 평점 및 리뷰 개수 조회
+    const [{ reviewCount, rating }] = await model.Reviews.findAll({
+      attributes: [
+        [
+          sequelize.fn("COALESCE", sequelize.fn("COUNT", sequelize.col("reviewidx")), 0),
+          "reviewCount",
+        ],
+        [
+          sequelize.fn(
+            "COALESCE",
+            sequelize.fn("ROUND", sequelize.fn("AVG", sequelize.col("rate")), 1),
+            0
+          ),
+          "rating",
+        ],
+      ],
+      raw: true,
+      where: { sitteridx: sitteridx },
+    });
 
     const { useridx, userid, name, img, usertype, address } = sData.dataValues;
     const {
@@ -351,6 +371,8 @@ exports.getSitterInfo = async (req, res) => {
       shortIntro,
       selfIntroduction,
       pay,
+      reviewCount,
+      rating,
     };
 
     res.status(200).json({
