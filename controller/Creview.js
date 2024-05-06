@@ -7,7 +7,8 @@ exports.addReview = async (req, res) => {
     if (!useridx) {
       res.status(200).send({ msg: "session이 만료되었습니다" });
     }
-    const { sitteridx, content, rate } = req.body;
+    const { sitteridx, content, rate: rateString } = req.body;
+    const rate = Number(rateString);
     const img = req.file?.location ? req.file.location : null;
 
     // 예약 확정 여부 조회
