@@ -1,9 +1,16 @@
+require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const { sequelize } = require("./models");
 const cors = require("cors");
 const app = express();
-const passport = require("passport"); // 수정된 경로
+const passport = require("passport");
+//routes
+const indexRouter = require("./routes");
+const authRouter = require("./routes/auth");
+
+// passport 설정
+require("./config/passport"); // google 및 kakao 설정
 
 // const dotenv = require("dotenv");
 // dotenv.config();
@@ -23,7 +30,7 @@ app.use(cors({ origin: true, credentials: true }));
 // --- session 미들웨어 설정 ---
 app.use(
   session({
-    secret: process.env.GOOGLE_CLIENT_SECRET || "sesac", // 새싹 수정
+    secret: process.env.KAKAO_CLIENT_ID || "sesac", // 새싹 수정
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -33,15 +40,10 @@ app.use(
   })
 );
 // --- session 미들웨어 설정 ---
-
 app.use(passport.initialize());
 app.use(passport.session());
-
-//routes
-const indexRouter = require("./routes");
-const authRouter = require("./routes/auth");
-app.use(serverPrefix, indexRouter);
 app.use("/auth", authRouter);
+app.use(serverPrefix, indexRouter);
 
 //db
 sequelize
