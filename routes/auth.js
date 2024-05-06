@@ -10,17 +10,9 @@ router.get(
   "/kakao/callback",
   passport.authenticate("kakao", { failureRedirect: "/login" }),
   function (req, res) {
-    res.json({
-      success: true,
-      message: "로그인 성공",
-      user: {
-        id: req.user.useridx, // 데이터베이스의 기본 키
-        userid: req.user.userid, // 사용자 식별자
-        name: req.user.name,
-        email: req.user.email, // 이메일은 선택적으로 카카오에서 받을 수 있음
-        img: req.user.img,
-      },
-    });
+    // 성공적으로 로그인 후 localhost:3000으로 리다이렉트
+    console.log("req.session--->>>", req.session);
+    res.redirect(`http://localhost:3000`);
   }
 );
 

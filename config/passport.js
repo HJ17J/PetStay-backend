@@ -15,7 +15,7 @@ passport.use(
       callbackURL: `http://localhost:${PORT}/auth/kakao/callback`,
     },
     async (accessToken, refreshToken, profile, done) => {
-      console.log(profile);
+      console.log("profile--->>>", profile);
       try {
         const user = await Users.findOrCreate({
           where: { userid: profile.id.toString() }, // 카카오 ID를 문자열로 변환
@@ -33,7 +33,8 @@ passport.use(
         console.log("카카오 로그인 중 에러 발생", error);
         return done(error);
       }
-    }
+    },
+    console.log("session --->>> ")
   )
 );
 
@@ -78,13 +79,18 @@ passport.use(
 
 // Passport 세션 설정
 passport.serializeUser((user, done) => {
-  done(null, user.useridx);
+  done(null, { id: user.useridx, name: user.name, usertype: user.usertype });
 });
 
-passport.deserializeUser((id, done) => {
-  Users.findByPk(id)
+passport.deserializeUser((sessionData, done) => {
+  // 세션에 저장된 정보를 기반으로 사용자 정보 복원
+  Users.findByPk(sessionData.id)
     .then((user) => {
-      done(null, user);
+      if (user) {
+        done(null, { id: user.useridx, name: user.name, usertype: user.usertype });
+      } else {
+        done(null, false);
+      }
     })
-    .catch((err) => done(err));
+    .catch((err) => done(err, false));
 });

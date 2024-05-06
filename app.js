@@ -8,7 +8,9 @@ const passport = require("passport");
 //routes
 const indexRouter = require("./routes");
 const authRouter = require("./routes/auth");
-require("./config/passport");
+
+// passport 설정
+require("./config/passport"); // google 및 kakao 설정
 
 // const dotenv = require("dotenv");
 // dotenv.config();
@@ -28,7 +30,7 @@ app.use(cors({ origin: true, credentials: true }));
 // --- session 미들웨어 설정 ---
 app.use(
   session({
-    secret: process.env.GOOGLE_CLIENT_SECRET || "sesac", // 새싹 수정
+    secret: process.env.KAKAO_CLIENT_ID || "sesac", // 새싹 수정
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -38,7 +40,6 @@ app.use(
   })
 );
 // --- session 미들웨어 설정 ---
-
 app.use(passport.initialize());
 app.use(passport.session());
 app.use("/auth", authRouter);
