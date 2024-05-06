@@ -83,7 +83,9 @@ router.post("/review/:resvidx", uploadReview.single("reviewImage"), Creview.addR
 // 리뷰 삭제
 router.delete("/review/:reviewidx", Creview.deleteReview);
 // 리뷰 조회 (회원 마이페이지)
-router.get("/review", Creview.getUserReviews);
+router.get("/review/:resvidx", Creview.getUserReviews);
+// 리뷰 조회 (펫시터 상세페이지)
+router.get("/sitter/review/:sitteridx", Creview.getSitterReviews);
 
 // 시터 목록 조회 + 검색
 router.get("/sitter", Cuser.getSitterLists);

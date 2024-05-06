@@ -13,7 +13,7 @@ const Reviews = function (Sequelize, DataTypes) {
         allowNull: false,
       },
       img: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.TEXT,
         allowNull: true,
       },
       rate: {
