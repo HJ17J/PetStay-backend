@@ -50,7 +50,7 @@ exports.getSitterLists = async (req, res) => {
         "img",
         [Sequelize.literal("Sitter.type"), "animalType"],
         [Sequelize.literal("COALESCE(Sitter.pay, 0)"), "pay"],
-        [Sequelize.literal("Sitter.oneLineIntro"), "shortIntro"],
+        [Sequelize.literal("Sitter.oneLineIntro"), "oneLineIntro"],
         [Sequelize.literal("COALESCE(COUNT(Reviews.reviewidx), 0)"), "reviewCount"],
         [Sequelize.literal("COALESCE(ROUND(AVG(Reviews.rate), 1), 0)"), "rating"],
       ],
@@ -125,14 +125,8 @@ exports.getSitterInfo = async (req, res) => {
     });
 
     const { useridx, userid, name, img, usertype, address } = sData.dataValues;
-    const {
-      type,
-      license,
-      career,
-      oneLineIntro: shortIntro,
-      selfIntroduction,
-      pay,
-    } = sData.dataValues.Sitter.dataValues;
+    const { type, license, career, oneLineIntro, selfIntroduction, pay } =
+      sData.dataValues.Sitter.dataValues;
 
     // 동물 타입 배열로 변경
     const animalType = type
@@ -149,7 +143,7 @@ exports.getSitterInfo = async (req, res) => {
       animalType,
       license,
       career,
-      shortIntro,
+      oneLineIntro,
       selfIntroduction,
       pay,
       reviewCount,
