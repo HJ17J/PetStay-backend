@@ -18,6 +18,7 @@ exports.getChats = async (req, res) => {
     const user = {
       name: user1.dataValues.name,
       img: user1.dataValues.img,
+      usertype: user1.dataValues.usertype,
     };
     const sitter = {
       name: sitter1.dataValues.name,
