@@ -116,9 +116,9 @@ exports.getSitterReviews = async (req, res) => {
     });
 
     // 리뷰 페이지네이션 추가
-    const limit = 2;
+    const itemLimit = 2;
     const totalReviews = reviewCount;
-    const totalPage = Math.ceil(totalReviews / limit);
+    const totalPage = Math.ceil(totalReviews / itemLimit);
 
     let offset;
     const currentPage = Number(req.query.rvPage);
@@ -126,20 +126,11 @@ exports.getSitterReviews = async (req, res) => {
     if (currentPage === 0) {
       offset = 0;
     } else {
-      offset = (currentPage - 1) * limit;
-    }
-
-    let startPage = Math.floor((currentPage - 1 / limit) * limit);
-    let endPage = startPage + limit - 1;
-
-    if (endPage > totalPage) {
-      endPage = totalPage;
-    } else if (startPage < 0) {
-      startPage = 1;
+      offset = (currentPage - 1) * itemLimit;
     }
 
     const rvData = await model.Reviews.findAll({
-      limit: limit,
+      limit: itemLimit,
       offset: offset,
       include: [
         {

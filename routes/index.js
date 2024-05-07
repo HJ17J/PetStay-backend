@@ -88,8 +88,10 @@ router.get("/review/:resvidx", Creview.getUserReviews);
 // 리뷰 조회 (펫시터 상세페이지)
 router.get("/sitter/review/:sitteridx", Creview.getSitterReviews);
 
-// 시터 목록 조회 + 검색
+// 시터 목록 조회
 router.get("/sitter", Csitter.getSitterLists);
+// 시터 검색
+router.get("/sitter/search", Csitter.getSitterLists);
 // 시터 상세 정보
 router.get("/sitter/:sitteridx", Csitter.getSitterInfo);
 
