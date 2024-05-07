@@ -30,7 +30,7 @@ app.use(cors({ origin: true, credentials: true }));
 // --- session 미들웨어 설정 ---
 app.use(
   session({
-    secret: process.env.KAKAO_CLIENT_ID || "sesac", // 새싹 수정
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: {
