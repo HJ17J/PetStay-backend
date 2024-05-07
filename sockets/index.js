@@ -3,7 +3,7 @@ const socketIO = require("socket.io");
 function socketHandler(server) {
   const io = socketIO(server, {
     cors: {
-      origin: "http://13.124.54.214:3000",
+      origin: true,
     },
   });
 
