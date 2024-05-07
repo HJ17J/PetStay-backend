@@ -54,6 +54,7 @@ const Cuser = require("../controller/Cuser");
 const Cchat = require("../controller/Cchat");
 const Creservation = require("../controller/Creservation");
 const Creview = require("../controller/Creview");
+const Csitter = require("../controller/Csitter");
 
 // /api-server
 
@@ -64,7 +65,7 @@ router.post("/nameCheck", Cuser.nameCheck);
 router.delete("/profile", Cuser.deleteProfile);
 //회원정보 조회
 router.post("/profile", Cuser.postProfile);
-router.patch("/profile", uploadProfile.single("profileImage"), Cuser.updateProfile);
+router.post("/profileUpdate", uploadProfile.single("profileImage"), Cuser.updateProfile);
 router.patch("/profile/pwUpdate", Cuser.updatePw);
 //로그인, 로그아웃 - 형석
 router.post("/login", Cuser.postLogin);
@@ -88,9 +89,9 @@ router.get("/review/:resvidx", Creview.getUserReviews);
 router.get("/sitter/review/:sitteridx", Creview.getSitterReviews);
 
 // 시터 목록 조회 + 검색
-router.get("/sitter", Cuser.getSitterLists);
+router.get("/sitter", Csitter.getSitterLists);
 // 시터 상세 정보
-router.get("/sitter/:sitteridx", Cuser.getSitterInfo);
+router.get("/sitter/:sitteridx", Csitter.getSitterInfo);
 
 //chat관련 router
 router.get("/chat/:sitteridx", Cchat.getChats);
