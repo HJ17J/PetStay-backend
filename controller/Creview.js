@@ -116,7 +116,7 @@ exports.getSitterReviews = async (req, res) => {
     });
 
     // 리뷰 페이지네이션 추가
-    const itemLimit = 2;
+    const itemLimit = 3;
     const totalReviews = reviewCount;
     const totalPage = Math.ceil(totalReviews / itemLimit);
 
