@@ -4,14 +4,44 @@ const { Users, Sitters, Reviews, sequelize, Sequelize } = require("../models");
 // 펫시터 목록 조회 (+쿼리스트링 검색)
 exports.getSitterLists = async (req, res) => {
   try {
-    console.log("session을 보여줘!!!", req.session);
+    const reqUrl = req.url.split("?")[0];
     let where = { usertype: "sitter" };
-    if (Object.keys(req.query).length) {
-      const [option] = Object.keys(req.query);
-      const [keyword] = Object.values(req.query);
-      where[option] = { [Op.substring]: keyword };
+
+    if (reqUrl === "/sitter") {
+      console.log("조회!!!");
+    } else {
+      console.log("검색!!!");
+      if (Object.keys(req.query).length) {
+        const [option] = Object.keys(req.query);
+        const [keyword] = Object.values(req.query);
+        where[option] = { [Op.substring]: keyword };
+      }
     }
+
+    // const pageLimit = 3;
+    // const itemLimit = 5;
+    // const currentPage = Number(req.query.page);
+    // let offset = (currentPage - 1) * itemLimit;
+
+    // // 전체 페이지 수 구하기
+    // const [{ totalSitters }] = await Sitters.findAll({
+    //   attributes: [[sequelize.fn("count", sequelize.col("id")), "totalSitters"]],
+    //   raw: true,
+    // });
+    // const totalPage = Math.ceil(totalSitters / itemLimit);
+
+    // let startPage = Math.floor((currentPage - 1) / pageLimit) * pageLimit + 1;
+    // let endPage = startPage + pageLimit - 1;
+
+    // if (endPage > totalPage) {
+    //   endPage = totalPage;
+    // }
+
+    // const pageInfo = { startPage, endPage, totalPage };
+
     const data = await Users.findAll({
+      // limit: itemLimit,
+      // offset: offset,
       attributes: [
         "useridx",
         "userid",
@@ -20,7 +50,7 @@ exports.getSitterLists = async (req, res) => {
         "img",
         [Sequelize.literal("Sitter.type"), "animalType"],
         [Sequelize.literal("COALESCE(Sitter.pay, 0)"), "pay"],
-        [Sequelize.literal("Sitter.oneLineIntro"), "shortIntro"],
+        [Sequelize.literal("Sitter.oneLineIntro"), "oneLineIntro"],
         [Sequelize.literal("COALESCE(COUNT(Reviews.reviewidx), 0)"), "reviewCount"],
         [Sequelize.literal("COALESCE(ROUND(AVG(Reviews.rate), 1), 0)"), "rating"],
       ],
@@ -29,26 +59,26 @@ exports.getSitterLists = async (req, res) => {
           model: Sitters,
           attributes: [],
           required: false,
+          group: ["Sitter.id"],
         },
         {
           model: Reviews,
           attributes: [],
           required: false,
+          group: ["Reviews.sitteridx"],
         },
       ],
       where: where,
-      group: ["Users.useridx", "Sitter.oneLineIntro", "Sitter.pay", "Sitter.type"],
-      order: [["useridx", "ASC"]],
+      group: ["Users.useridx", "Sitter.type", "Sitter.pay", "Sitter.oneLineIntro"],
+      order: [["rating", "DESC"]],
+      // subQuery: false,
     });
 
-    // 동물 타입 배열로 변경
     const list = data.map((item) => {
-      const animalType = item.dataValues.animalType.split(", ").map((el) => {
-        return el === "dog" ? "강아지" : el === "cat" ? "고양이" : "기타";
-      });
+      const animalType = item.dataValues.animalType.split(", ");
       return { ...item.dataValues, animalType };
     });
-    console.log(list);
+    // console.log(list);
 
     res.status(200).json({ isSuccess: true, data: list });
   } catch (error) {
@@ -95,14 +125,8 @@ exports.getSitterInfo = async (req, res) => {
     });
 
     const { useridx, userid, name, img, usertype, address } = sData.dataValues;
-    const {
-      type,
-      license,
-      career,
-      oneLineIntro: shortIntro,
-      selfIntroduction,
-      pay,
-    } = sData.dataValues.Sitter.dataValues;
+    const { type, license, career, oneLineIntro, selfIntroduction, pay } =
+      sData.dataValues.Sitter.dataValues;
 
     // 동물 타입 배열로 변경
     const animalType = type
@@ -119,7 +143,7 @@ exports.getSitterInfo = async (req, res) => {
       animalType,
       license,
       career,
-      shortIntro,
+      oneLineIntro,
       selfIntroduction,
       pay,
       reviewCount,
