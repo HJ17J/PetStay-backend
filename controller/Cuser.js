@@ -267,6 +267,11 @@ exports.updateProfile = async (req, res) => {
       updateFields.img = req.file.location;
     }
 
+    if (img) {
+      console.log("default image로 변경 요청...");
+      updateFields.img = "/images/PetStayLogo.png";
+    }
+
     await model.Users.update(updateFields, {
       where: { useridx },
     });
