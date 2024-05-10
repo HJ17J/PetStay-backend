@@ -11,7 +11,7 @@ router.get(
   passport.authenticate("kakao", { failureRedirect: "/login" }),
   function (req, res) {
     // 성공적으로 로그인 후 localhost:3000으로 리다이렉트
-    console.log("req.session--->>>", req.session);
+    // console.log("req.session--->>>", req.session);
     res.redirect(`http://localhost:3000`);
   }
 );

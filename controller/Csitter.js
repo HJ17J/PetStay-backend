@@ -8,9 +8,9 @@ exports.getSitterLists = async (req, res) => {
     let where = { usertype: "sitter" };
 
     if (reqUrl === "/sitter") {
-      console.log("조회!!!");
+      // console.log("조회!!!");
     } else {
-      console.log("검색!!!");
+      // console.log("검색!!!");
       if (Object.keys(req.query).length) {
         const [option] = Object.keys(req.query);
         const [keyword] = Object.values(req.query);
@@ -149,7 +149,7 @@ exports.getSitterInfo = async (req, res) => {
       reviewCount,
       rating,
     };
-    console.log(sitterInfo);
+    // console.log(sitterInfo);
 
     res.status(200).json({
       isSuccess: true,
