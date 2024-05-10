@@ -3,21 +3,16 @@
 ## 반려인과 펫시터를 연결시켜주는 중개 사이트 👉 http://13.124.54.214/
 ![image](https://github.com/HJ17J/PetStay-backend/assets/57868607/c7cca7cd-e886-4cb8-8822-5491bf2b238b)
 
-### 작업 기간: 2023.12.27 ~ 2024.07.08
+### 작업 기간: 2024.04.19 ~ 2024.05.08
 ### 인원: 5명(프론트엔드 2명, 프론트앤백 3명)
 ### 로그인:
 - ID: `user`
 - PW: `user`
 
-# 서비스 소개
-<details align="center">
-<summary style="font-size: 18px;"><b>✨2차 팀프로젝트 대상 수상작</b></summary>
-<div markdown="1">
-
-
-
-
 ## 📖 Description
+
+<p style="font-size: 18px;"><b>✨2차 팀프로젝트 대상 수상작</b></p>
+<div markdown="1">
 
 강아지, 고양이 및 모든 반려동물을 취급하는 반려인-펫시터 중개 사이트입니다.
 
