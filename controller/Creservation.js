@@ -2,53 +2,17 @@ const { where } = require("sequelize");
 const model = require("../models");
 
 //setInterval - ("request", "approved", "refused", "done") 자정에 approved -> done으로 변경
-// async function updateConfirmStatus() {
-//   try {
-//     // 오늘 날짜
-//     const today = new Date();
-//     today.setHours(0, 0, 0, 0);
-
-//     await model.Reservations.update(
-//       { confirm: "done" },
-//       {
-//         where: {
-//           date: { [model.Sequelize.Op.lt]: today },
-//           confirm: "approved",
-//         },
-//       }
-//     );
-
-//     console.log("예약 내역 업데이트 완료");
-//   } catch (error) {
-//     console.error("예약 내역 업데이트 중 오류 발생>>", error);
-//   }
-// }
-
-// function runAtMidnight() {
-//   // 자정까지 남은 시간을 계산
-//   const now = new Date();
-//   const midnight = new Date(now);
-//   midnight.setHours(24, 0, 0, 0);
-//   const timeUntilMidnight = midnight.getTime() - now.getTime();
-
-//   setInterval(updateConfirmStatus, timeUntilMidnight);
-// }
-
-// // 매일 자정 실행
-// runAtMidnight();
-
-//done추가용 임시
 async function updateConfirmStatus() {
   try {
-    // 5월 10일 이전 날짜
-    const mayTenth = new Date("2024-05-10");
-    mayTenth.setHours(0, 0, 0, 0);
+    // 오늘 날짜
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
     await model.Reservations.update(
       { confirm: "done" },
       {
         where: {
-          date: { [model.Sequelize.Op.lt]: mayTenth },
+          date: { [model.Sequelize.Op.lt]: today },
           confirm: "approved",
         },
       }
@@ -70,9 +34,6 @@ function runAtMidnight() {
   setInterval(updateConfirmStatus, timeUntilMidnight);
 }
 
-// 서버가 시작될 때 즉시 실행
-updateConfirmStatus();
-
 // 매일 자정 실행
 runAtMidnight();
 
@@ -92,9 +53,9 @@ exports.insertResv = async (req, res) => {
       raw: true,
     });
     const time = endTime - startTime;
-    console.log(startTime, endTime);
+    // console.log(startTime, endTime);
     const totalPrice = sitterPay * time * animalNumber;
-    console.log("총금액 >>", totalPrice);
+    // console.log("총금액 >>", totalPrice);
 
     // 예약 등록
     const resvData = await model.Reservations.create({
@@ -117,7 +78,7 @@ exports.insertResv = async (req, res) => {
 
 exports.confirmReservation = async (req, res) => {
   const { resvidx } = req.params;
-  console.log("resvidx >>> ", resvidx);
+  // console.log("resvidx >>> ", resvidx);
   try {
     const reservation = await model.Reservations.findByPk(resvidx);
     if (!reservation) {
@@ -134,7 +95,7 @@ exports.confirmReservation = async (req, res) => {
 
 exports.refusedReservation = async (req, res) => {
   const { resvidx } = req.params;
-  console.log("resvidx >>> ", resvidx);
+  // console.log("resvidx >>> ", resvidx);
   try {
     const reservation = await model.Reservations.findByPk(resvidx);
     if (!reservation) {
@@ -151,7 +112,7 @@ exports.refusedReservation = async (req, res) => {
 
 exports.deleteReservation = async (req, res) => {
   const { resvidx } = req.params;
-  console.log("resvidx >>> ", resvidx);
+  // console.log("resvidx >>> ", resvidx);
 
   try {
     const reservation = await model.Reservations.findByPk(resvidx);
@@ -172,14 +133,14 @@ exports.getDateResv = async (req, res) => {
   try {
     const { sitteridx } = req.params;
     const { date } = req.body;
-    console.log("날짜!!", date);
+    // console.log("날짜!!", date);
     const reservation = await model.Reservations.findAll({
       where: {
         sitteridx,
         date,
       },
     });
-    console.log("예약!!!", reservation);
+    // console.log("예약!!!", reservation);
     res.send({ reservation });
   } catch (error) {
     console.error("서버 에러 발생");

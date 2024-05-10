@@ -11,13 +11,13 @@ exports.addReview = async (req, res) => {
       res.status(200).send({ msg: "session이 만료되었습니다" });
     }
     const { content, rate: rateString } = req.body;
-    console.log("리뷰내용>>", content, "별점>>>", rateString);
+    // console.log("리뷰내용>>", content, "별점>>>", rateString);
     const resvData = await model.Reservations.findOne({ where: { resvidx } });
     // console.log("예약 데이터", resvData);
     const sitteridx = resvData.dataValues.sitteridx;
     const rate = Number(rateString);
     const img = req.file?.location ? req.file.location : null;
-    console.log("사진이 있다면!!>>", img);
+    // console.log("사진이 있다면!!>>", img);
 
     // 해당 예약 건에 리뷰가 존재하지 않는 경우에만 리뷰 추가
     const [newReview, created] = await model.Reviews.findOrCreate({
@@ -59,7 +59,7 @@ exports.deleteReview = async (req, res) => {
       where: { reviewidx: reviewidx },
     });
     const useridx = user.dataValues.useridx;
-    console.log("useridx>>", useridx);
+    // console.log("useridx>>", useridx);
 
     // 본인이 작성한 글인 경우에만 리뷰 삭제
     if (req.session.user.id === useridx) {
@@ -84,7 +84,7 @@ exports.getUserReviews = async (req, res) => {
     // 추후 페이지네이션 추가 필요
     const result = await model.Reviews.findAll({ where: { resvidx } });
     // const reviews = result.map((el) => el.dataValues);
-    console.log("review가 있나?", result);
+    // console.log("review가 있나?", result);
     res.status(200).json({ isSuccess: true, data: result });
   } catch (error) {
     res.status(500).json({ isSuccess: false, msg: "리뷰 조회 실패" });

@@ -13,8 +13,8 @@ exports.getChats = async (req, res) => {
     //나와 대화상대 정보 검색
     const user1 = await model.Users.findOne({ where: { useridx } });
     const sitter1 = await model.Users.findOne({ where: { useridx: sitteridx } });
-    console.log("user1>>>>>>>>>>>>>>>", user1.dataValues.name);
-    console.log("sitter1>>>>>>>>>>>>>>>", sitter1);
+    // console.log("user1>>>>>>>>>>>>>>>", user1.dataValues.name);
+    // console.log("sitter1>>>>>>>>>>>>>>>", sitter1);
     const user = {
       name: user1.dataValues.name,
       img: user1.dataValues.img,
@@ -33,7 +33,7 @@ exports.getChats = async (req, res) => {
         useridx,
         sitteridx,
       });
-      console.log("새방 ", newRoom);
+      // console.log("새방 ", newRoom);
       //현재방
       const roomidx = newRoom.dataValues.roomidx;
       const rooms = await model.Rooms.findAll({ where: { useridx } });
@@ -54,7 +54,7 @@ exports.getChats = async (req, res) => {
           attributes: ["name", "img"],
         },
       });
-      console.log("name포함 room목록>>", rooms[0].dataValues.User.dataValues.name);
+      // console.log("name포함 room목록>>", rooms[0].dataValues.User.dataValues.name);
       res.status(200).send({ msg: "get", rooms, chats, user, sitter, roomidx });
     }
   } catch (err) {
@@ -113,7 +113,7 @@ exports.postChat = async (req, res) => {
       res.status(200).send({ msg: "session이 만료되었습니다" });
     }
     const { content, roomidx } = req.body;
-    console.log(content, roomidx);
+    // console.log(content, roomidx);
     const saveChat = await model.Chats.create({
       content,
       roomidx,
@@ -133,8 +133,8 @@ exports.postImg = async (req, res) => {
       res.status(200).send({ msg: "session이 만료되었습니다" });
     }
     const { img, roomidx } = req.body;
-    console.log("roomidx>>", roomidx);
-    console.log("img ", req.file.location);
+    // console.log("roomidx>>", roomidx);
+    // console.log("img ", req.file.location);
     const saveChat = await model.Chats.create({
       img: req.file.location,
       roomidx: Number(roomidx),
@@ -156,7 +156,7 @@ exports.getChatsOne = async (req, res) => {
       res.status(200).send({ msg: "session이 만료되었습니다" });
     }
     const user = await model.Users.findOne({ where: { useridx: idx } });
-    console.log("user의 타입 검사>>", user.dataValues.usertype);
+    // console.log("user의 타입 검사>>", user.dataValues.usertype);
 
     if (user.dataValues.usertype === "user") {
       //user일 때
@@ -171,12 +171,12 @@ exports.getChatsOne = async (req, res) => {
       // console.log("name포함 room목록>>", rooms[0].dataValues.User);
       res.status(200).send({ msg: "getUsers", rooms, user });
     } else {
-      console.log("type>>>", user.dataValues.usertype);
+      // console.log("type>>>", user.dataValues.usertype);
       //sitter일 때
       const roomR = await model.Rooms.findAll({
         where: { sitteridx: idx },
       });
-      console.log("roomRRRRr", roomR);
+      // console.log("roomRRRRr", roomR);
       const rooms = await model.Rooms.findAll({
         where: { sitteridx: idx },
         include: {

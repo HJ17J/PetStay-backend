@@ -9,7 +9,7 @@ const salt = 10;
 exports.postJoin = async (req, res) => {
   const t = await model.sequelize.transaction();
   try {
-    console.log("req.body >>> ", req.body);
+    // console.log("req.body >>> ", req.body);
     const {
       userid,
       userpw,
@@ -135,7 +135,7 @@ exports.postLogin = async (req, res) => {
       name: user.name,
       usertype: user.usertype,
     };
-    console.log("session--->>>", req.session);
+    // console.log("session--->>>", req.session);
     res.send({ msg: `환영합니다. ${user.name}님!`, statusCode: 200 });
   } catch (error) {
     console.error(`로그인 중 에러 발생 : ${error.message}`);
@@ -163,7 +163,7 @@ exports.deleteProfile = async (req, res) => {
   try {
     // 사용자 조회
     const user = await model.Users.findByPk(useridx);
-    console.log("user >>> ", user);
+    // console.log("user >>> ", user);
     if (!user) {
       return res.status(404).send({ message: "사용자를 찾을 수 없습니다." });
     }
@@ -188,7 +188,7 @@ exports.deleteProfile = async (req, res) => {
 
 exports.postProfile = async (req, res) => {
   try {
-    console.log(req.session.user.id);
+    // console.log(req.session.user.id);
     const useridx = req.session.user.id;
     if (!useridx) {
       res.status(200).send({ msg: "session이 만료되었습니다" });
@@ -224,7 +224,7 @@ exports.postProfile = async (req, res) => {
         ],
         where: { sitteridx: useridx },
       });
-      console.log("resvData>>>>", resvData);
+      // console.log("resvData>>>>", resvData);
       res.status(200).send({ userData, sitterData, resvData });
     }
   } catch (err) {
@@ -236,12 +236,12 @@ exports.postProfile = async (req, res) => {
 exports.updateProfile = async (req, res) => {
   try {
     const useridx = req.session.user.id;
-    console.log("useridx는>>", useridx);
+    // console.log("useridx는>>", useridx);
     if (!useridx) {
       res.status(200).send({ msg: "session이 만료되었습니다" });
     }
     const userData = await model.Users.findOne({ where: { useridx } });
-    console.log("body로 오는중!!!", req.body);
+    // console.log("body로 오는중!!!", req.body);
     const {
       userid,
       name,
@@ -263,12 +263,12 @@ exports.updateProfile = async (req, res) => {
 
     // req.file이 존재하는 경우에만 img 필드 업데이트
     if (req.file) {
-      console.log("file이 오고있습니다....", req.file);
+      // console.log("file이 오고있습니다....", req.file);
       updateFields.img = req.file.location;
     }
 
     if (img) {
-      console.log("default image로 변경 요청...");
+      // console.log("default image로 변경 요청...");
       updateFields.img = "/images/PetStayLogo.png";
     }
 
@@ -278,7 +278,7 @@ exports.updateProfile = async (req, res) => {
 
     // type에 따라 수정작업
     if (userData.usertype === "sitter") {
-      console.log("sitter입니다");
+      // console.log("sitter입니다");
       await model.Sitters.update(
         {
           type,
@@ -315,7 +315,7 @@ exports.updatePw = async (req, res) => {
       attributes: ["userpw"],
       where: { useridx },
     });
-    console.log(password.userpw);
+    // console.log(password.userpw);
     const match = await bcrypt.compare(userpw, password.userpw);
     if (!match) {
       return res.status(401).json({ message: "비밀번호가 일치하지 않습니다." });
