@@ -98,32 +98,14 @@ backend
 ├── app.js
 ```
 
-## 🔨 Server Architecture
-(↑서버 아키텍처에 대한 내용을 그림으로 표현함으로써 인프라를 어떻게 구축했는 지 한 눈에 보여줄 수 있다.)
-![](https://docs.aws.amazon.com/gamelift/latest/developerguide/images/realtime-whatis-architecture-vsd.png)
-
-## ⚒ CI/CD
-- github actions를 활용해서 지속적 통합 및 배포
-- `feature` 브랜치에서 `dev`로 Pull Request를 보내면, CI가 동작된다.
-- `dev`에서 `master`로 Pull Request를 보내면, CI가 동작되고 Merge가 되면, 운영 리소스에 배포된다.
-
 ## 👨‍💻 Role & Contribution
 
-**Frontend (Web)**
-
-- 관리자 페이지 (Vue.js) 개발
-- 전체 아키텍처 구성
-
-**Devops**
-
-- CI/CD 구축 (Docker, Github Action)
-- 서버 모니터링
-
-**etc**
-
-- 전체 개발 일정 및 이슈 관리
+![image](https://github.com/HJ17J/PetStay-backend/assets/107241014/65e4ee30-7446-45bc-afab-2b22c5696518)
 
 ## 👨‍👩‍👧‍👦 Developer
-*  **박재성** ([jaeseongDev](https://github.com/jaeseongDev))
-*  **고성진** ([seongjin96](https://github.com/seongjin96))
-*  **조연희** ([yeoneei](https://github.com/yeoneei))
+*  
+*  **신동원** ([eastorigin](https://github.com/eastorigin))
+*  **이형석** ([yhs0329](https://github.com/yhs0329))
+*  **임학민** ([sabb12](https://github.com/sabb12)
+*  **진현정** ([HJ17J](https://github.com/HJ17J))
+*  **홍주희** ([hjh3933](https://github.com/hjh3933))
