@@ -40,18 +40,18 @@
 </p>
 
 ## ⭐ Main Feature
-### 정기 결제 기능
-- 아임포트(Iamport)를 이용한 정기 결제 기능 구현
+### 예약 관리 기능
+- react-calendar를 사용하여 예약 일정 선택 기능 구현
+- sequelize로 db저장
 
 ### 회원가입 및 로그인 
-- JWT 이용
+- session-express 사용
 
-### 기타 기능
-- 상품 리스트 조회 및 세부 사항 조회
-- 마이페이지
+### 채팅방 기능
+- socekt.io를 사용하여 실시간 채팅 구현
+- aws의 s3를 사용하여 이미지 저장 및 경로를 소켓으로 전송할 수 있도록 구현
 
 ## 💻 Getting Started
-(↑해당 프로젝트 설치 및 실행 방법)
 
 ### Installation
 ```
@@ -63,33 +63,39 @@ npm run dev
 ```
 ### Production
 ```
-npm run build
+npm start
 ```
 
 ## 🔧 Stack
 - **Language**: JavaScript
 - **Library & Framework** : Node.js
-- **Database** : AWS RDS (MariaDB)
+- **Database** : AWS RDS (Mysql)
 - **ORM** : Sequelize
 - **Deploy**: AWS EC2
 
 ## :open_file_folder: Project Structure
 
 ```markdown
-src
-├── common
-│   ├── config
-│   ├── types
-│   └── utils
-│       ├── types
-│       └── utils
+frontend
+├── public
+│   ├── images
+├── src
+    ├── components
+    └── config
+    └── locales
+    └── pages
+    └── store
+    └── styles
+    └── types
+├── App.tsx
+├── index.tsx
+backend
+├── config
 ├── controller
-├── entity
-├── infrastructure
-│   ├── express
-│   └── typeorm
-├── repository
-└── ser
+├── models
+├── routes
+├── sockets
+├── app.js
 ```
 
 ## 🔨 Server Architecture
