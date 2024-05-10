@@ -30,7 +30,6 @@
 (↑프로젝트에 대한 자세한 설명)
 
 ## :baby_chick: Demo
-(↑해당 프로젝트가 실제 배포되고 있지 않아서, 이미지로 프로젝트의 뷰를 대체할 경우)
 <p float="left">
     <img src="https://lh3.googleusercontent.com/iYHEwh2_Q6nIKS67eItV4AwIokeJDNe0ojtpWGqKpRyhaRlmCSmBcnkFNCmXbTkajKA=w2560-h1330-rw" width=200 />
     <img src="https://lh3.googleusercontent.com/xl0sqT6Jz1p9Gq9slw4VXRr-akf4v74b_k3QkZUMZPvYV37-e5LqTZcOjofof4Xyl48=w2560-h1330-rw" width=200 />
@@ -103,7 +102,6 @@ backend
 ![image](https://github.com/HJ17J/PetStay-backend/assets/107241014/65e4ee30-7446-45bc-afab-2b22c5696518)
 
 ## 👨‍👩‍👧‍👦 Developer
-*  
 *  **신동원** ([eastorigin](https://github.com/eastorigin))
 *  **이형석** ([yhs0329](https://github.com/yhs0329))
 *  **임학민** ([sabb12](https://github.com/sabb12)
