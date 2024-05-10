@@ -16,27 +16,18 @@
 ![image](https://github.com/HJ17J/PetStay-backend/assets/154948606/1a19b76e-2e17-497e-bf9c-01daef8c482d)
 
 
-(↑프로젝트를 대표하는 대표 이미지)
-
-
 ## 📖 Description
 
-오프라인에 존재했던 롤링페이퍼 서비스를 온라인으로 옮겨왔습니다.
+강아지, 고양이 및 모든 반려동물을 취급하는 반려인-펫시터 중개 사이트입니다.
 
-친구들, 동료들과 함께 링크를 공유하여 한 사람을 위한 롤링페이퍼를 만들어보세요.
+1시간부터 여러 날까지 유연하게 선택이 가능합니다.
 
-다양한 종류의 편지지와 스티커로 화면을 꾸미고, 소중한 사람에게 뜻깊은 경험을 선물하세요!
+펫시터가 의뢰인 동물만 관리하도록 1대1 매칭 및 소통이 됩니다.
 
-(↑프로젝트에 대한 자세한 설명)
+번역기능을 추가해서 외국인도 사용가능하게끔 구현하는 것이 목표입니다.
 
 ## :baby_chick: Demo
-<p float="left">
-    <img src="https://lh3.googleusercontent.com/iYHEwh2_Q6nIKS67eItV4AwIokeJDNe0ojtpWGqKpRyhaRlmCSmBcnkFNCmXbTkajKA=w2560-h1330-rw" width=200 />
-    <img src="https://lh3.googleusercontent.com/xl0sqT6Jz1p9Gq9slw4VXRr-akf4v74b_k3QkZUMZPvYV37-e5LqTZcOjofof4Xyl48=w2560-h1330-rw" width=200 />
-    <img src="https://lh3.googleusercontent.com/JqUUXWSgU0bhSBpOObERLvfUGE3eBnInmYvDMY3S2aAatyeFKLOifWnBLgZ0KLGbmA=w2560-h1330-rw" width=200 />
-    <img src="https://lh3.googleusercontent.com/AdN5fkguQMSc4M6iVkAFONsuxZhOQaKE7TDzuhF56FgDLORAnBv8160W7vva4a6kFBg=w2560-h1330-rw" width=200 />
-    <img src="https://lh3.googleusercontent.com/ruDvvtKehqGB_4PX7QBsUY2RLDe_v6g5FL-_XmC6SUGjKUQqa08Uy-DtsNi8wYuuXU4=w2560-h1330-rw" width=200 />
-</p>
+![2024-05-10110133-ezgif com-video-to-gif-converter](https://github.com/HJ17J/PetStay-backend/assets/154948606/f490d07c-a792-4757-9fe7-f05bd180aed7)
 
 ## ⭐ Main Feature
 ### 예약 관리 기능
