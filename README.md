@@ -1,19 +1,20 @@
 
-# 👨‍👩‍👦‍👦 Pet Stay 👨‍👩‍👦‍👦 
+# 👨‍👩‍👦‍👦 PetStay 👨‍👩‍👦‍👦 
+## 반려인과 펫시터를 연결시켜주는 중개 사이트 👉 http://13.124.54.214/
+![image](https://github.com/HJ17J/PetStay-backend/assets/57868607/c7cca7cd-e886-4cb8-8822-5491bf2b238b)
 
-[![license](https://img.shields.io/badge/License-AGPL-red)](https://github.com/NDjust/Generate-HeadLine/blob/master/LICENSE)
-[![code](https://img.shields.io/badge/Code-Python3.7-blue)](https://docs.python.org/3/license.html)
-[![data](https://img.shields.io/badge/Data-news-blueviolet)](https://news.chosun.com/ranking/list.html)
-[![member](https://img.shields.io/badge/Project-Member-brightgreen)](https://github.com/NDjust/Generate-HeadLine/blob/Feature_README/README.md#participation-member)
-[![DBMS](https://img.shields.io/badge/DBMS-MySQL-orange)](https://www.mysql.com/downloads/)
+### 작업 기간: 2023.12.27 ~ 2024.07.08
+### 인원: 5명(프론트엔드 2명, 프론트앤백 3명)
+### 로그인:
+- ID: `user`
+- PW: `user`
 
-(↑관련된 뱃지 달기)
+# 서비스 소개
+<details align="center">
+<summary style="font-size: 18px;"><b>✨2차 팀프로젝트 대상 수상작</b></summary>
+<div markdown="1">
 
-> ### 반려인과 펫시터를 연결시켜주는 중개 사이트 👉 https://rollingpaper.site/
 
-(↑프로젝트 한 줄 설명 : 설명을 장황하게 작성하는 것보다 한 줄로 어떤 프로젝트인지 설명하는 것이 훨씬 직관적이다.)
-
-![image](https://github.com/HJ17J/PetStay-backend/assets/154948606/1a19b76e-2e17-497e-bf9c-01daef8c482d)
 
 
 ## 📖 Description
