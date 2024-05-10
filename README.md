@@ -26,12 +26,8 @@
 
 번역기능을 추가해서 외국인도 사용가능하게끔 구현하는 것이 목표입니다.
 
-오프라인에 존재했던 롤링페이퍼 서비스를 온라인으로 옮겨왔습니다.
-
 ## :baby_chick: Demo
-(↑해당 프로젝트가 실제 배포되고 있지 않아서, 이미지로 프로젝트의 뷰를 대체할 경우)
 ![2024-05-10110133-ezgif com-video-to-gif-converter](https://github.com/HJ17J/PetStay-backend/assets/154948606/f490d07c-a792-4757-9fe7-f05bd180aed7)
-
 
 ## ⭐ Main Feature
 ### 예약 관리 기능
@@ -97,7 +93,6 @@ backend
 ![image](https://github.com/HJ17J/PetStay-backend/assets/107241014/65e4ee30-7446-45bc-afab-2b22c5696518)
 
 ## 👨‍👩‍👧‍👦 Developer
-*  
 *  **신동원** ([eastorigin](https://github.com/eastorigin))
 *  **이형석** ([yhs0329](https://github.com/yhs0329))
 *  **임학민** ([sabb12](https://github.com/sabb12)
