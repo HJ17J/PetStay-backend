@@ -23,7 +23,7 @@
 번역기능을 추가해서 외국인도 사용가능하게끔 구현하는 것이 목표입니다.
 
 ## :baby_chick: Demo
-![2024-05-10110133-ezgif com-video-to-gif-converter](https://github.com/HJ17J/PetStay-backend/assets/154948606/f490d07c-a792-4757-9fe7-f05bd180aed7)
+[![2024-05-10110133-ezgif com-video-to-gif-converter](https://github.com/HJ17J/PetStay-backend/assets/154948606/f490d07c-a792-4757-9fe7-f05bd180aed7)](https://github.com/HJ17J/PetStay-frontend/assets/57868607/285aee5f-dca1-4d40-b7a1-e4460767fd27)
 
 ## ⭐ Main Feature
 ### 예약 관리 기능
@@ -91,6 +91,6 @@ backend
 ## 👨‍👩‍👧‍👦 Developer
 *  **신동원** ([eastorigin](https://github.com/eastorigin))
 *  **이형석** ([yhs0329](https://github.com/yhs0329))
-*  **임학민** ([sabb12](https://github.com/sabb12)
+*  **임학민** ([sabb12](https://github.com/sabb12))
 *  **진현정** ([HJ17J](https://github.com/HJ17J))
 *  **홍주희** ([hjh3933](https://github.com/hjh3933))
